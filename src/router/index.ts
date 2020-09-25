@@ -1,7 +1,7 @@
 import Vue from 'vue';
 import VueRouter, { RouteConfig } from 'vue-router';
 import store from '../store';
-import Home from '../views/Home.vue';
+import TimetableView from '@/views/TimetableView.vue';
 
 Vue.use(VueRouter);
 
@@ -9,7 +9,7 @@ const routes: Array<RouteConfig> = [
   {
     path: '/',
     name: 'Home',
-    component: Home
+    component: TimetableView
   },
   {
     path: '/first-visit',
