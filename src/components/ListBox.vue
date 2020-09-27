@@ -139,7 +139,7 @@ export default class ListBox extends Vue {
 @import "../assets/functions"
 .list-box
   position: relative
-
+  font-size: 1rem
   &__input
     width: 100%
     box-sizing: border-box
@@ -147,7 +147,8 @@ export default class ListBox extends Vue {
     border: 1px solid #aaa
     border-radius: 3px
     padding: 6px 8px 2px 8px
-
+    line-height: 1.6
+    font-size: 1rem
     &:focus
       outline-color: scale-color(theme-color("primary"), $lightness: 30%)
       border-bottom-left-radius: 0
