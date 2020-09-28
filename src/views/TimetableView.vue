@@ -1,29 +1,37 @@
 <template>
-  <Page>
-    <div class="timetable" v-if="hasLoaded">
+  <div class="timetable" v-if="hasLoaded">
+    <div class="timetable__week">
       <div
-        class="timetable__lesson"
-        v-for="lesson in currentDay"
-        :key="lesson.id"
+        v-for="(day, dayNumber) in currentWeek"
+        class="timetable__day"
+        :key="dayNumber"
       >
-        <TimetableCard :entry="lesson"></TimetableCard>
+        <div class="timetable__day-label">{{ dayNumber | dayName }}</div>
+        <div class="timetable__lesson" v-for="lesson in day" :key="lesson.id">
+          <TimetableCard :entry="lesson"></TimetableCard>
+        </div>
       </div>
     </div>
-  </Page>
+  </div>
 </template>
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
 import { TimetableEntry } from 'ggtu-timetable-api-client';
 import { State } from 'vuex-class';
-import Page from '@/components/Page.vue';
+import Page from '@/components/common/Page.vue';
 import { LOAD_DEFAULT_TIMETABLE } from '@/store/action-types';
 import { EmptyTimetableEntry } from '@/utils/timetable';
-import TimetableCard from '@/components/TimetableCard.vue';
+import TimetableCard from '@/components/timetables/TimetableCard.vue';
 
 @Component({
   name: 'TimetableView',
-  components: { Page, TimetableCard }
+  components: { Page, TimetableCard },
+  filters: {
+    dayName(index: number) {
+      return ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'][index];
+    }
+  }
 })
 export default class TimetableView extends Vue {
   @State(state => state.timetable.default) timetable!: (
@@ -31,9 +39,14 @@ export default class TimetableView extends Vue {
     | EmptyTimetableEntry
   )[][][];
   @State(state => state.timetable.hasLoaded) hasLoaded!: boolean;
+  week = 0;
 
   get currentDay() {
     return this.timetable[0][0];
+  }
+
+  get currentWeek() {
+    return this.timetable[this.week].map((day, i, week) => week[0]);
   }
 
   mounted() {
@@ -44,10 +57,31 @@ export default class TimetableView extends Vue {
 }
 </script>
 
-<style scoped lang="sass">
+<style lang="sass">
+@import "../assets/functions"
 .timetable
-  padding: 1rem
-  display: grid
-  grid-template-rows: repeat(auto-fit, 1fr)
-  grid-row-gap: 1rem
+  max-width: 100%
+  overflow: auto
+  &::-webkit-scrollbar
+    border-radius: 5px
+    height: 10px
+    overflow: hidden
+  &::-webkit-scrollbar-thumb
+    background-color: theme-color("primary")
+    border-radius: 5px
+  &__day-label
+    text-align: center
+    margin-bottom: 1rem
+    font-weight: bold
+    font-size: 24px
+  &__week
+    display: flex
+    column-gap: 2rem
+
+  &__day
+    flex: 1 0 450px
+    max-width: calc(100vw - 1rem)
+
+  &__lesson
+    margin-bottom: 1rem
 </style>
