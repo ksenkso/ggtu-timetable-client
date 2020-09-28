@@ -16,9 +16,8 @@ export default class Header extends Vue {
 </script>
 
 <style scoped lang="sass">
-@import "../assets/functions"
+@import "../../assets/functions"
 .header
-  height: 48px
   color: #ffffff
   background-color: theme-color("primary")
   padding: 0 1rem
