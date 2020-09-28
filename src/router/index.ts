@@ -26,7 +26,10 @@ const router = new VueRouter({
 });
 
 router.beforeEach((to, from, next) => {
-  if (to.name !== 'FirstVisit' && !store.state.user.type) {
+  if (
+    to.name !== 'FirstVisit' &&
+    !(store.state.user.type && store.state.user.entityId)
+  ) {
     next({ path: '/first-visit' });
   } else {
     next();
