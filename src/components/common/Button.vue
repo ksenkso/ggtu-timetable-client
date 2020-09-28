@@ -30,7 +30,7 @@ export default class Button extends Vue {
 </script>
 
 <style lang="sass">
-@import "../assets/functions"
+@import "../../assets/functions"
 .button
   border: 1px solid theme-color("dark")
   padding: 6px 12px

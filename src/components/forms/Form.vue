@@ -18,7 +18,7 @@
 </template>
 
 <script lang="ts">
-import Button from '@/components/Button.vue';
+import Button from '@/components/common/Button.vue';
 
 import { Component, Prop, Vue } from 'vue-property-decorator';
 
@@ -35,15 +35,15 @@ export default class Form extends Vue {
     this.$emit('submit', this.getFormData());
   }
 
-  getFormData(): any {
-    const data: any = {};
-    this.$slots.default!.forEach(node => {
-      const name = node.componentInstance!.$options.name;
+  getFormData(): object {
+    const data = {};
+    this.$slots.default.forEach(node => {
+      const name = node.componentInstance.$options.name;
       if (name === 'Field') {
         // if a form already has value with the name of this field,
         // make an array that will contain all values for this name in order
         // that they appear in the DOM
-        if (data[node.componentInstance!.$props.name]) {
+        if (data[node.componentInstance.$props.name]) {
           data[node.componentInstance?.$props.name] = [
             data[node.componentInstance?.$props.name],
             node.componentInstance?.$data.value

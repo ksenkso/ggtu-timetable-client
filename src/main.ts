@@ -3,8 +3,8 @@ import App from './App.vue';
 import './registerServiceWorker';
 import router from './router';
 import store from './store';
-import Button from '@/components/Button.vue';
-import Alert from '@/components/Alert.vue';
+import Button from '@/components/common/Button.vue';
+import Alert from '@/components/common/Alert.vue';
 
 Vue.config.productionTip = false;
 Vue.component('Button', Button);

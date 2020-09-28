@@ -55,7 +55,7 @@ export default class Field extends Vue {
 </script>
 
 <style scoped lang="sass">
-@import "../assets/functions"
+@import "../../assets/functions"
 .form
   &__field
     margin-bottom: .5em

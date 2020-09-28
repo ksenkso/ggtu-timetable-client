@@ -22,8 +22,8 @@ export default class Alert extends Vue {
 </script>
 
 <style scoped lang="sass">
-@import '../assets/variables'
-@import '../assets/functions'
+@import '../../assets/variables'
+@import '../../assets/functions'
 .alert
   padding: 12px 16px
   border: 1px solid #ddd

@@ -136,7 +136,7 @@ export default class ListBox extends Vue {
 </script>
 
 <style scoped lang="sass">
-@import "../assets/functions"
+@import "../../assets/functions"
 .list-box
   position: relative
   font-size: 1rem
