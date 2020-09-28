@@ -14,11 +14,9 @@
 
 <script>
 import { Component, Vue } from 'vue-property-decorator';
-import { directive as onClickAway } from 'vue-clickaway';
 
 @Component({
-  name: 'Menu',
-  directives: { onClickAway }
+  name: 'Menu'
 })
 export default class Menu extends Vue {
   items = [{ name: 'Моё расписание', to: '/' }];
@@ -43,15 +41,16 @@ export default class Menu extends Vue {
   padding: 2rem 1rem
   display: flex
   flex-direction: column
+
   &__item
     color: #000
     text-decoration: none
     margin-bottom: 1rem
-    &:visited
-      //color: inherit
+
     &_active, &:hover, &:active
       text-decoration: underline
       color: theme-color("primary")
+
   @media (max-width: 960px)
     flex-direction: row
     padding: 1rem
