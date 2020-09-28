@@ -53,15 +53,15 @@
 import { Component, Vue } from 'vue-property-decorator';
 import { SET_USER_TYPE } from '@/store/mutation-types';
 import api from '@/api';
-import ListBox from '@/components/ListBox.vue';
-import Field from '@/components/Field.vue';
+import ListBox from '@/components/forms/ListBox.vue';
+import Field from '@/components/forms/Field.vue';
 import { defaultEntityAdapter } from '@/utils/lists';
 import { SelectOption } from '@/utils/lists';
 import { NamedEntity } from '@/store/types';
-import Form from '@/components/Form.vue';
+import Form from '@/components/forms/Form.vue';
 import { SET_USER_PREFERRED_ENTITY } from '@/store/mutation-types';
-import Slider from '@/components/Slider.vue';
-import Screen from '@/components/Screen.vue';
+import Slider from '@/components/slider/Slider.vue';
+import Screen from '@/components/slider/Screen.vue';
 import { Ref } from 'vue-property-decorator';
 import { LOAD_DEFAULT_TIMETABLE } from '@/store/action-types';
 

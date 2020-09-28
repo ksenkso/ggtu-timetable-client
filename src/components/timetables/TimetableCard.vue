@@ -59,7 +59,7 @@ export default class TimetableCard extends Vue {
 </script>
 
 <style scoped lang="sass">
-@import "../assets/functions"
+@import "../../assets/functions"
 
 .lesson
   display: grid
@@ -79,6 +79,7 @@ export default class TimetableCard extends Vue {
     white-space: pre-wrap
     text-align: right
     grid-area: place
+    line-height: 1.6
   &__teachers
     grid-area: teachers
   &__name
