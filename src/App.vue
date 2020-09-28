@@ -12,4 +12,6 @@ html, body
   padding: 0
   height: 100%
   font-family: Tahoma, Arial, sans-serif
+*
+  box-sizing: border-box
 </style>
