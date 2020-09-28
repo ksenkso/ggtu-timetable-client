@@ -48,7 +48,7 @@ export default class Field extends Vue {
     return `form__field${this.inline ? ' form__field_inline' : ''}`;
   }
 
-  updateValue(newValue) {
+  updateValue(newValue: never) {
     this.value = newValue;
   }
 }
