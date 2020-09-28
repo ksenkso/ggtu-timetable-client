@@ -4,6 +4,7 @@ import { TimetableEntryType } from 'ggtu-timetable-api-client';
 export interface EmptyTimetableEntry {
   id: number;
   type: TimetableEntryType;
+  index: number;
 }
 
 export function fillTimetable(
@@ -17,7 +18,8 @@ export function fillTimetable(
     if (day[entryIndex].index > lessonIndex) {
       filled.push({
         id: Math.random(),
-        type: TimetableEntryType.Empty
+        type: TimetableEntryType.Empty,
+        index: lessonIndex
       });
     } else {
       filled.push(day[entryIndex]);
