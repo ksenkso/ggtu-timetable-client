@@ -76,7 +76,9 @@ export default class FirstVisit extends Vue {
   @Ref('slider') slider!: Slider;
 
   get listLabel() {
-    return this.type === 'group' ? 'Выберите группу' : 'Выберите преподавателя';
+    return this.type === 'group'
+      ? 'Начните вводить название группы'
+      : 'Начните вводить ФИО преподавателя';
   }
 
   choose(type: 'group' | 'teacher') {
