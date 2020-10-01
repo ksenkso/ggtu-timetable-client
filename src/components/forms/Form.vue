@@ -21,7 +21,21 @@
 import Button from '@/components/common/Button.vue';
 
 import { Component, Prop, Vue } from 'vue-property-decorator';
+import { VNode } from 'vue';
 
+const walk = (children: VNode[], fields: Vue[]) => {
+  children.forEach(node => {
+    if (
+      node.componentInstance &&
+      node.componentInstance.$options.name === 'Field' &&
+      node.componentInstance
+    ) {
+      fields.push(node.componentInstance);
+    } else if (node.children && node.children.length) {
+      walk(node.children, fields);
+    }
+  });
+};
 @Component({
   name: 'Form',
   components: { Button }
@@ -36,22 +50,19 @@ export default class Form extends Vue {
   }
 
   getFormData(): object {
-    const data = {};
-    this.$slots.default.forEach(node => {
-      const name = node.componentInstance.$options.name;
-      if (name === 'Field') {
-        // if a form already has value with the name of this field,
-        // make an array that will contain all values for this name in order
-        // that they appear in the DOM
-        if (data[node.componentInstance.$props.name]) {
-          data[node.componentInstance?.$props.name] = [
-            data[node.componentInstance?.$props.name],
-            node.componentInstance?.$data.value
-          ];
-        } else {
-          data[node.componentInstance?.$props.name] =
-            node.componentInstance?.$data.value;
-        }
+    const data: Record<string, number | string | number[] | string[]> = {};
+    const fields: Vue[] = [];
+    if (this.$slots.default) {
+      walk(this.$slots.default, fields);
+    }
+    fields.forEach(field => {
+      const name = field.$props.name as string;
+      if (data[name]) {
+        data[name] = Array.isArray(data[name])
+          ? data[name].concat(field.$data.value)
+          : [data[name], field.$data.value];
+      } else {
+        data[name] = field.$data.value;
       }
     });
     return data;
