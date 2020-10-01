@@ -62,6 +62,7 @@ export default class TimetableCard extends Vue {
 @import "../../assets/functions"
 
 .lesson
+  height: 200px
   display: grid
   grid-template-columns: 1fr 100px
   grid-template-rows: repeat(auto-fit, 1fr)
@@ -84,6 +85,7 @@ export default class TimetableCard extends Vue {
     grid-area: teachers
   &__name
     grid-area: name
+    height: 2em
   &__type
     grid-area: type
 </style>
