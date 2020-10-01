@@ -8,12 +8,15 @@
     <Alert v-if="emptyWeek" theme="warning">Расписание недоступно</Alert>
     <div v-else class="timetable__week">
       <carousel
+        :min-swipe-distance="100"
+        :per-page="1"
         :per-page-custom="[
           [480, 1],
           [800, 2],
           [1400, 3]
         ]"
-        :navigation-enabled="true"
+        :navigation-enabled="false"
+        :pagination-enabled="false"
       >
         <slide
           v-for="(day, dayNumber) in currentWeek"
@@ -126,6 +129,10 @@ export default class TimetableView extends Vue {
       margin-left: 0
       order: 1
       margin-bottom: 0
+      position: fixed
+      bottom: 64px
+      width: calc(100% - 1rem)
+      z-index: 9999
 
   &__day-label
     text-align: center

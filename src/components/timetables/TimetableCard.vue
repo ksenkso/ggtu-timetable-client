@@ -70,6 +70,8 @@ export default class TimetableCard extends Vue {
   grid-row-gap: .5rem
   padding: 1.5rem 1rem
   box-shadow: 0 2px 5px 0 rgba(0, 0, 0, .13)
+  @media (max-width: 500px)
+    height: auto
   &_empty
     background-color: rgba(theme-color("warning"), .3)
     color: darken(theme-color("warning"), 30%)
@@ -86,6 +88,8 @@ export default class TimetableCard extends Vue {
   &__name
     grid-area: name
     height: 2em
+    @media (max-width: 500px)
+      height: auto
   &__type
     grid-area: type
 </style>

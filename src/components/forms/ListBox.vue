@@ -28,7 +28,8 @@
       class="list-box__input"
       v-model="displayValue"
       @blur="onBlur"
-      @input="onInput"
+      @keyup="onInput"
+      @change="onInput"
       @keydown.space.enter="onKeyboardSelect"
       @keydown.up="moveSelection(-1)"
       @keydown.down="moveSelection(1)"
@@ -62,7 +63,7 @@ export default class ListBox extends Vue {
   }
 
   onBlur() {
-    this.forceHideOptions = true;
+    // this.forceHideOptions = true;
   }
 
   onKeyboardSelect(e: KeyboardEvent) {
@@ -89,6 +90,7 @@ export default class ListBox extends Vue {
 
   onOptionClick(e: MouseEvent) {
     const target = e.target as HTMLElement;
+    console.log(target);
     // typescript will scream if i will not check for undefined
     if (target.dataset.value !== undefined) {
       this.selectOption(+target.dataset.value);
@@ -96,6 +98,7 @@ export default class ListBox extends Vue {
   }
 
   selectOption(value: number) {
+    console.log('selected', value);
     const option = this.getOption(value);
     if (option) {
       this.selected = option;

@@ -57,6 +57,10 @@ export default class Menu extends Vue {
     box-shadow: 0 -2px 5px 0 rgba(0, 0, 0, .13)
     align-items: center
     justify-content: space-evenly
+    position: fixed
+    width: 100%
+    bottom: 0
+    z-index: 9999
     &__item
       margin-bottom: 0
 </style>

@@ -43,6 +43,6 @@ export default class Page extends Vue {
     grid-area: header
   @media (max-width: 960px)
     grid-template-columns: 100vw
-    grid-template-rows: #{$header-height} 1fr 64px
+    grid-template-rows: #{$header-height} 1fr #{48 + 64}px
     grid-template-areas: "header" "content" "menu"
 </style>
