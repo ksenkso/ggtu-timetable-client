@@ -24,12 +24,14 @@ import { LOAD_DEFAULT_TIMETABLE } from '@/store/action-types';
 import { EmptyTimetableEntry } from '@/utils/timetable';
 import TimetableCard from '@/components/timetables/TimetableCard.vue';
 
+const dayNames = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'];
+
 @Component({
   name: 'TimetableView',
   components: { Page, TimetableCard },
   filters: {
     dayName(index: number) {
-      return ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'][index];
+      return dayNames[index];
     }
   }
 })
@@ -46,6 +48,10 @@ export default class TimetableView extends Vue {
   }
 
   get currentWeek() {
+    /**
+     * TODO: create a week selector, remove this stub and render actual timetable;
+     * if the day is empty, render a special info component
+     */
     return this.timetable[this.week].map((day, i, week) => week[0]);
   }
 
@@ -62,18 +68,22 @@ export default class TimetableView extends Vue {
 .timetable
   max-width: 100%
   overflow: auto
+
   &::-webkit-scrollbar
     border-radius: 5px
     height: 10px
     overflow: hidden
+
   &::-webkit-scrollbar-thumb
     background-color: theme-color("primary")
     border-radius: 5px
+
   &__day-label
     text-align: center
     margin-bottom: 1rem
     font-weight: bold
     font-size: 24px
+
   &__week
     display: flex
     column-gap: 2rem
