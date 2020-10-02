@@ -6,8 +6,13 @@
       :values="weeks"
     ></ButtonGroup>
     <Alert v-if="emptyWeek" theme="warning">Расписание недоступно</Alert>
-    <div v-else class="timetable__week">
+    <div
+      v-else
+      :class="['timetable__week', { timetable__week_dragging: isDragging }]"
+    >
       <carousel
+        @mousedown.native="startDragging"
+        @mouseup.native="stopDragging"
         :min-swipe-distance="100"
         :per-page="1"
         :per-page-custom="[
@@ -71,6 +76,7 @@ export default class TimetableView extends Vue {
   )[][][];
   @State(state => state.timetable.hasLoaded) hasLoaded!: boolean;
   week = 0;
+  isDragging = false;
 
   get weeks() {
     return ['Верхняя', 'Нижняя'];
@@ -90,6 +96,14 @@ export default class TimetableView extends Vue {
 
   get swiperOptions() {
     return {};
+  }
+
+  startDragging() {
+    this.isDragging = true;
+  }
+
+  stopDragging() {
+    this.isDragging = false;
   }
 
   changeWeek(value: ButtonGroupValue) {
@@ -120,6 +134,7 @@ export default class TimetableView extends Vue {
   display: flex
   flex-direction: column
 
+
   .button-group
     margin-left: auto
     max-width: 180px
@@ -142,6 +157,10 @@ export default class TimetableView extends Vue {
 
   &__week
     overflow: hidden
+    cursor: grab
+    &_dragging
+      cursor: grabbing
+
 
   &__day
     max-width: calc(100vw - 1rem)
