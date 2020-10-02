@@ -59,7 +59,7 @@ export default class Form extends Vue {
       const name = field.$props.name as string;
       if (data[name]) {
         data[name] = Array.isArray(data[name])
-          ? data[name].concat(field.$data.value)
+          ? (data[name] as (number | string)[]).concat(field.$data.value)
           : [data[name], field.$data.value];
       } else {
         data[name] = field.$data.value;
