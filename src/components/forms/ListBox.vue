@@ -26,9 +26,8 @@
       ref="input"
       type="text"
       class="list-box__input"
-      v-model="displayValue"
       @blur="onBlur"
-      @keyup="onInput"
+      @input="onInput"
       @change="onInput"
       @keydown.space.enter="onKeyboardSelect"
       @keydown.up="moveSelection(-1)"
@@ -112,7 +111,8 @@ export default class ListBox extends Vue {
     return option.name.toLowerCase().includes(filter.toLowerCase());
   }
 
-  onInput() {
+  onInput(e: InputEvent) {
+    this.displayValue = (e.target as HTMLInputElement).value;
     this.forceHideOptions = false;
     if (this.selected) {
       if (!this.matches(this.selected, this.displayValue)) {
