@@ -1,10 +1,7 @@
 <template>
   <div :class="['lesson', { lesson_empty: isEmpty }]">
     <h3>Пара {{ entry.index + 1 }}</h3>
-    <template v-if="isEmpty">
-      <div class="lesson__empty">Пары нет</div>
-    </template>
-    <template v-else>
+    <template v-if="!isEmpty">
       <div class="lesson__name">{{ entry.lesson.name }}</div>
       <div class="lesson__type">{{ entry.type | lessonType }}</div>
       <div class="lesson__place">{{ entry.cabinet | lessonCabinet }}</div>
@@ -73,9 +70,18 @@ export default class TimetableCard extends Vue {
   @media (max-width: 500px)
     height: auto
   &_empty
-    background-color: rgba(theme-color("warning"), .3)
     color: darken(theme-color("warning"), 30%)
-    display: block
+    display: flex
+    align-items: center
+    justify-content: center
+    // for easier color testing
+    --color1: rgba(210, 168, 0, 0.3)
+    --color2: rgba(210, 168, 0, 0.4)
+    background: striped-background(135deg, var(--color1), var(--color2), 30px)
+    h3
+      margin: 0
+      padding: 1rem 2rem
+      background-color: lighten(theme-color("warning"), 20%)
   h3
     margin-top: 0
   &__place
