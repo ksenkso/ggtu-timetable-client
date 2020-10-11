@@ -2,7 +2,7 @@
   <div :class="['lesson', { lesson_empty: isEmpty }]">
     <h3>Пара {{ entry.index + 1 }}</h3>
     <template v-if="!isEmpty">
-      <div class="lesson__name">{{ entry.lesson.name }}</div>
+      <div class="lesson__name">{{ entry.subject.name }}</div>
       <div class="lesson__type">{{ entry.type | lessonType }}</div>
       <div class="lesson__place">{{ entry.cabinet | lessonCabinet }}</div>
       <div class="lesson__teachers">
@@ -15,23 +15,21 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
 import { Prop } from 'vue-property-decorator';
-import { TimetableEntry } from 'ggtu-timetable-api-client';
-import { TimetableEntryType } from 'ggtu-timetable-api-client';
-import { Cabinet } from 'ggtu-timetable-api-client';
+import { Cabinet, Lesson, LessonType } from 'ggtu-timetable-api-client';
 import { NamedEntity } from '@/store/types';
 
 @Component({
   name: 'TimetableCard',
   filters: {
-    lessonType(type: TimetableEntryType) {
+    lessonType(type: LessonType) {
       switch (type) {
-        case TimetableEntryType.Lab:
+        case LessonType.Lab:
           return 'Лабораторное занятие';
-        case TimetableEntryType.Lecture:
+        case LessonType.Lecture:
           return 'Лекция';
-        case TimetableEntryType.Practice:
+        case LessonType.Practice:
           return 'Практическое занятие';
-        case TimetableEntryType.Empty:
+        case LessonType.Empty:
           return 'Нет занятия';
       }
     },
@@ -47,10 +45,10 @@ import { NamedEntity } from '@/store/types';
   }
 })
 export default class TimetableCard extends Vue {
-  @Prop({ required: true }) entry!: TimetableEntry;
+  @Prop({ required: true }) entry!: Lesson;
 
   get isEmpty() {
-    return this.entry.type === TimetableEntryType.Empty;
+    return this.entry.type === LessonType.Empty;
   }
 }
 </script>

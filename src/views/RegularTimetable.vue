@@ -5,11 +5,7 @@
       :default-index="0"
       :values="weeks"
     ></ButtonGroup>
-    <Alert v-if="emptyWeek" theme="warning">Расписание недоступно</Alert>
-    <div
-      v-else
-      :class="['timetable__week', { timetable__week_dragging: isDragging }]"
-    >
+    <div :class="['timetable__week', { timetable__week_dragging: isDragging }]">
       <carousel
         @mousedown.native="startDragging"
         @mouseup.native="stopDragging"
@@ -49,49 +45,48 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
-import { TimetableEntry } from 'ggtu-timetable-api-client';
 import { State } from 'vuex-class';
 import Page from '@/components/common/Page.vue';
 import { LOAD_DEFAULT_TIMETABLE } from '@/store/action-types';
-import { EmptyTimetableEntry } from '@/utils/timetable';
 import TimetableCard from '@/components/timetables/TimetableCard.vue';
 import ButtonGroup from '@/components/common/ButtonGroup.vue';
 import { ButtonGroupValue } from '@/components/common/ButtonGroup.vue';
+import {
+  Day,
+  RegularTimetable as Timetable,
+  Week
+} from 'ggtu-timetable-api-client';
 
-const dayNames = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'];
+const dayNames: Record<string, string> = {
+  [Day.Monday]: 'Пн',
+  [Day.Tuesday]: 'Вт',
+  [Day.Wednesday]: 'Ср',
+  [Day.Thursday]: 'Чт',
+  [Day.Friday]: 'Пт',
+  [Day.Saturday]: 'Сб'
+};
 
 @Component({
   name: 'RegularTimetable',
   components: { Page, TimetableCard, ButtonGroup },
   filters: {
-    dayName(index: number) {
+    dayName(index: string) {
       return dayNames[index];
     }
   }
 })
 export default class RegularTimetable extends Vue {
-  @State(state => state.timetable.default) timetable!: (
-    | TimetableEntry
-    | EmptyTimetableEntry
-  )[][][];
+  @State(state => state.timetable.default) timetable!: Timetable;
   @State(state => state.timetable.hasLoaded) hasLoaded!: boolean;
-  week = 0;
+  week = Week.Top;
   isDragging = false;
 
   get weeks() {
     return ['Верхняя', 'Нижняя'];
   }
 
-  get currentDay() {
-    return this.timetable[0][0];
-  }
-
   get currentWeek() {
     return this.timetable[this.week];
-  }
-
-  get emptyWeek() {
-    return !this.currentWeek.some(day => day.length);
   }
 
   get swiperOptions() {
@@ -158,6 +153,7 @@ export default class RegularTimetable extends Vue {
   &__week
     overflow: hidden
     cursor: grab
+
     &_dragging
       cursor: grabbing
 
@@ -185,6 +181,7 @@ export default class RegularTimetable extends Vue {
 
   &__empty-day
     display: flex
+
     align-items: center
     justify-content: center
     height: 180px
