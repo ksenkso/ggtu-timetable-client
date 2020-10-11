@@ -7,6 +7,7 @@
     ></ButtonGroup>
     <div :class="['timetable__week', { timetable__week_dragging: isDragging }]">
       <carousel
+        ref="carousel"
         @mousedown.native="startDragging"
         @mouseup.native="stopDragging"
         :min-swipe-distance="100"
@@ -31,7 +32,7 @@
               v-for="lesson in day"
               :key="lesson.id"
             >
-              <TimetableCard :entry="lesson"></TimetableCard>
+              <LessonView :lesson="lesson"></LessonView>
             </div>
           </div>
           <Alert class="timetable__empty-day" v-else theme="warning">
@@ -44,14 +45,16 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator';
-import { State } from 'vuex-class';
+import { Component, Ref, Vue } from 'vue-property-decorator';
+import { Action, State } from 'vuex-class';
 import Page from '@/components/common/Page.vue';
 import { LOAD_DEFAULT_TIMETABLE } from '@/store/action-types';
 import TimetableCard from '@/components/timetables/TimetableCard.vue';
-import ButtonGroup from '@/components/common/ButtonGroup.vue';
-import { ButtonGroupValue } from '@/components/common/ButtonGroup.vue';
+import ButtonGroup, {
+  ButtonGroupValue
+} from '@/components/common/ButtonGroup.vue';
 import { Day, RegularTimetable, Week } from 'ggtu-timetable-api-client';
+import LessonView from '@/components/timetables/LessonView.vue';
 
 const dayNames: Record<string, string> = {
   [Day.Monday]: 'Пн',
@@ -64,7 +67,7 @@ const dayNames: Record<string, string> = {
 
 @Component({
   name: 'TimetableView',
-  components: { Page, TimetableCard, ButtonGroup },
+  components: { LessonView, Page, TimetableCard, ButtonGroup },
   filters: {
     dayName(index: string) {
       return dayNames[index];
@@ -74,6 +77,8 @@ const dayNames: Record<string, string> = {
 export default class TimetableView extends Vue {
   @State(state => state.timetable.default) timetable!: RegularTimetable;
   @State(state => state.timetable.hasLoaded) hasLoaded!: boolean;
+  @Action(LOAD_DEFAULT_TIMETABLE) loadTimetable!: () => Promise<void>;
+  @Ref('carousel') carousel!: Vue;
   week = Week.Top;
   isDragging = false;
 
@@ -102,9 +107,31 @@ export default class TimetableView extends Vue {
   }
 
   mounted() {
-    if (!this.hasLoaded) {
-      this.$store.dispatch(LOAD_DEFAULT_TIMETABLE);
-    }
+    (this.hasLoaded ? Promise.resolve() : this.loadTimetable()).then(() => {
+      this.setHeights();
+      console.log(this.setHeights);
+      document.documentElement.addEventListener('resize', this.setHeights);
+    });
+  }
+
+  destroyed() {
+    document.documentElement.removeEventListener('resize', this.setHeights);
+  }
+
+  private setHeights() {
+    const heights = [0, 0, 0, 0, 0, 0];
+    this.carousel.$children.forEach(slide => {
+      slide.$children.forEach((view, row) => {
+        if (view.$el.clientHeight > heights[row]) {
+          heights[row] = view.$el.clientHeight;
+        }
+      });
+    });
+    this.carousel.$children.forEach(slide => {
+      slide.$children.forEach((view, row) => {
+        (view.$el as HTMLElement).style.height = `${heights[row]}px`;
+      });
+    });
   }
 }
 </script>
@@ -177,10 +204,12 @@ export default class TimetableView extends Vue {
 
   &__empty-day
     display: flex
-
     align-items: center
     justify-content: center
     height: 180px
+
+    &.alert
+      margin-top: 0 !important
 
     h3
       color: darken(theme-color("warning"), 30%)
