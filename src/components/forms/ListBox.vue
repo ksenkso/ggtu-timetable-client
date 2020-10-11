@@ -11,13 +11,13 @@
         v-for="option in filteredOptions"
         :data-value="option.value"
         :key="option.value"
-        :class="[
-          'list-box__option',
-          {
-            'list-box__option_selected':
-              selected && selected.value === option.value
-          }
-        ]"
+        :class="
+          `list-box__option${
+            selected && selected.value === option.value
+              ? ' list-box__option_selected'
+              : ''
+          }`
+        "
       >
         {{ option.name }}
       </div>
@@ -25,10 +25,10 @@
     <input
       ref="input"
       type="text"
-      class="list-box__input"
+      class="form__control"
+      v-model="displayValue"
       @blur="onBlur"
       @input="onInput"
-      @change="onInput"
       @keydown.space.enter="onKeyboardSelect"
       @keydown.up="moveSelection(-1)"
       @keydown.down="moveSelection(1)"
@@ -39,6 +39,7 @@
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import { SelectOption } from '@/utils/lists';
+import { Watch } from 'vue-property-decorator';
 
 @Component({
   name: 'ListBox'
@@ -62,7 +63,7 @@ export default class ListBox extends Vue {
   }
 
   onBlur() {
-    // this.forceHideOptions = true;
+    this.forceHideOptions = true;
   }
 
   onKeyboardSelect(e: KeyboardEvent) {
@@ -89,7 +90,6 @@ export default class ListBox extends Vue {
 
   onOptionClick(e: MouseEvent) {
     const target = e.target as HTMLElement;
-    console.log(target);
     // typescript will scream if i will not check for undefined
     if (target.dataset.value !== undefined) {
       this.selectOption(+target.dataset.value);
@@ -97,7 +97,6 @@ export default class ListBox extends Vue {
   }
 
   selectOption(value: number) {
-    console.log('selected', value);
     const option = this.getOption(value);
     if (option) {
       this.selected = option;
@@ -111,8 +110,7 @@ export default class ListBox extends Vue {
     return option.name.toLowerCase().includes(filter.toLowerCase());
   }
 
-  onInput(e: InputEvent) {
-    this.displayValue = (e.target as HTMLInputElement).value;
+  onInput() {
     this.forceHideOptions = false;
     if (this.selected) {
       if (!this.matches(this.selected, this.displayValue)) {
@@ -135,6 +133,16 @@ export default class ListBox extends Vue {
       this.selectOption(this.defaultValue);
     }
   }
+
+  @Watch('options')
+  updateDisplayValue() {
+    const selectedValue = this.selected
+      ? this.selected.value
+      : this.defaultValue;
+    if (selectedValue !== undefined) {
+      this.selectOption(selectedValue);
+    }
+  }
 }
 </script>
 
@@ -142,7 +150,7 @@ export default class ListBox extends Vue {
 @import "../../assets/functions"
 .list-box
   position: relative
-  font-size: 1rem
+
   &__input
     width: 100%
     box-sizing: border-box
@@ -150,8 +158,7 @@ export default class ListBox extends Vue {
     border: 1px solid #aaa
     border-radius: 3px
     padding: 6px 8px 2px 8px
-    line-height: 1.6
-    font-size: 1rem
+
     &:focus
       outline-color: scale-color(theme-color("primary"), $lightness: 30%)
       border-bottom-left-radius: 0

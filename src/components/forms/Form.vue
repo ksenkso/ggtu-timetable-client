@@ -49,20 +49,19 @@ export default class Form extends Vue {
     this.$emit('submit', this.getFormData());
   }
 
-  getFormData(): object {
-    const data: Record<string, number | string | number[] | string[]> = {};
+  getFormData(): any {
+    const data: any = {};
     const fields: Vue[] = [];
     if (this.$slots.default) {
       walk(this.$slots.default, fields);
     }
     fields.forEach(field => {
-      const name = field.$props.name as string;
-      if (data[name]) {
-        data[name] = Array.isArray(data[name])
-          ? (data[name] as (number | string)[]).concat(field.$data.value)
-          : [data[name], field.$data.value];
+      if (data[field.$props.name]) {
+        data[field.$props.name] = Array.isArray(data[field.$props.name])
+          ? data[field.$props.name].concat(field.$data.value)
+          : [data[field.$props.name], field.$data.value];
       } else {
-        data[name] = field.$data.value;
+        data[field.$props.name] = field.$data.value;
       }
     });
     return data;

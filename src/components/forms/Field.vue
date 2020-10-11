@@ -8,6 +8,7 @@
       :updateValue="updateValue"
       :disabled="disabled"
       :readonly="readonly"
+      :value="value"
     >
       <input
         class="form__control"
@@ -23,43 +24,75 @@
   </div>
 </template>
 
-<script lang="ts">
-import { Component, Vue } from 'vue-property-decorator';
-import { Prop } from 'vue-property-decorator';
-
-@Component({
-  name: 'Field'
-})
-export default class Field extends Vue {
-  @Prop({ required: true }) name!: string;
-  @Prop({ required: true }) label!: string;
-  @Prop({ default: 'text' }) type!: string;
-  @Prop({ type: Boolean }) disabled!: boolean;
-  @Prop({ type: Boolean }) readonly!: boolean;
-  @Prop({ type: Boolean }) inline!: boolean;
-  @Prop({ default: '' }) initialValue!: string;
-  value = this.initialValue;
-
-  get id() {
-    return `${this.name}_${this.$vnode.tag}`;
+<script>
+export default {
+  name: 'Field',
+  props: {
+    name: {
+      type: String,
+      required: true
+    },
+    label: {
+      type: String,
+      required: true
+    },
+    type: {
+      type: String,
+      default: 'text'
+    },
+    disabled: {
+      type: Boolean,
+      default: false
+    },
+    readonly: {
+      type: Boolean,
+      default: false
+    },
+    inline: {
+      type: Boolean,
+      required: false
+    },
+    initialValue: {
+      type: String,
+      required: false,
+      default: null
+    }
+  },
+  data() {
+    return {
+      value: this.initialValue
+    };
+  },
+  computed: {
+    id() {
+      return `${this.name}_${this.$vnode.tag}`;
+    },
+    className() {
+      return `form__field${this.inline ? ' form__field_inline' : ''}`;
+    }
+  },
+  methods: {
+    updateValue(newValue) {
+      this.value = newValue;
+    }
+  },
+  mounted() {
+    if (this.initialValue !== undefined) {
+      this.updateValue(this.value);
+    }
   }
-
-  get className() {
-    return `form__field${this.inline ? ' form__field_inline' : ''}`;
-  }
-
-  updateValue(newValue: never) {
-    this.value = newValue;
-  }
-}
+};
 </script>
 
-<style scoped lang="sass">
+<style lang="sass">
 @import "../../assets/functions"
 .form
   &__field
-    margin-bottom: .5em
+    margin: 1rem 0
     width: 100%
+
+    &:first-child
+      margin-top: 0
 
     &_inline
       display: flex
@@ -80,5 +113,12 @@ export default class Field extends Vue {
     border: 1px solid #aaa
     border-radius: 3px
     vertical-align: baseline
+    line-height: 1.6
+    height: 35px
     outline-color: scale-color(theme-color("primary"), $lightness: 30%)
+
+    background-color: #ffffff
+
+    &[type="date"], &[type="datetime"]
+      max-height: 35px
 </style>
