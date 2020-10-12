@@ -19,7 +19,10 @@ import { Component, Vue } from 'vue-property-decorator';
   name: 'Menu'
 })
 export default class Menu extends Vue {
-  items = [{ name: 'Моё расписание', to: '/' }];
+  items = [
+    { name: 'Моё расписание', to: '/' },
+    { name: 'Текущее расписание', to: '/current' }
+  ];
   isOpen = false;
 
   open() {
@@ -60,6 +63,7 @@ export default class Menu extends Vue {
     position: fixed
     width: 100%
     bottom: 0
+
     z-index: 9999
     &__item
       margin-bottom: 0

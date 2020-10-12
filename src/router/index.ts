@@ -16,6 +16,11 @@ const routes: Array<RouteConfig> = [
     name: 'FirstVisit',
     component: () =>
       import(/* webpackChunkName: "first-visit" */ '@/views/FirstVisit.vue')
+  },
+  {
+    path: '/current',
+    name: 'CurrentTimetable',
+    component: () => import(/* webpackChunkName: "current" */ '@/views/Current.vue')
   }
 ];
 
