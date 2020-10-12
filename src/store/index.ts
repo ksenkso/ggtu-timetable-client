@@ -2,13 +2,14 @@ import Vue from 'vue';
 import Vuex from 'vuex';
 import {
   SET_DEFAULT_TIMETABLE,
+  SET_PATCHES,
   SET_TIMETABLE_LOADED,
   SET_USER_PREFERRED_ENTITY,
   SET_USER_TYPE
 } from '@/store/mutation-types';
 import api from '@/api';
-import { LOAD_DEFAULT_TIMETABLE } from '@/store/action-types';
-import { RegularTimetable } from 'ggtu-timetable-api-client';
+import { LOAD_DEFAULT_TIMETABLE, LOAD_PATCHES } from '@/store/action-types';
+import { EntityType, Patch, RegularTimetable } from 'ggtu-timetable-api-client';
 
 Vue.use(Vuex);
 const USER_TYPE_KEY = 'ggtu_timetable/user_type';
@@ -22,7 +23,8 @@ export default new Vuex.Store({
     },
     timetable: {
       default: {} as RegularTimetable,
-      hasLoaded: false
+      hasLoaded: false,
+      patches: [] as Patch[]
     }
   },
   mutations: {
@@ -34,14 +36,14 @@ export default new Vuex.Store({
       localStorage.setItem(USER_PREFERRED_ENTITY_KEY, id.toString());
       state.user.entityId = id;
     },
-    [SET_DEFAULT_TIMETABLE](
-      state,
-      timetable: RegularTimetable
-    ) {
+    [SET_DEFAULT_TIMETABLE](state, timetable: RegularTimetable) {
       state.timetable.default = timetable;
     },
     [SET_TIMETABLE_LOADED](state, hasLoaded: boolean) {
       state.timetable.hasLoaded = hasLoaded;
+    },
+    [SET_PATCHES](state, patches: Patch[]) {
+      state.timetable.patches = patches;
     }
   },
   actions: {
@@ -57,6 +59,28 @@ export default new Vuex.Store({
         context.commit(SET_DEFAULT_TIMETABLE, timetable);
         context.commit(SET_TIMETABLE_LOADED, true);
       });
+    },
+    [LOAD_PATCHES](
+      context,
+      { type = EntityType.Group, id }: { type: EntityType; id: number }
+    ) {
+      let request;
+      switch (type) {
+        case EntityType.Teacher: {
+          request = api.patches.getForTeacher(id);
+          break;
+        }
+        case EntityType.Cabinet: {
+          request = api.patches.getForCabinet(id);
+          break;
+        }
+        default: {
+          request = api.patches.getForGroup(id);
+        }
+        request.then(patches => {
+          context.commit(SET_PATCHES, patches);
+        })
+      }
     }
   },
   modules: {}
