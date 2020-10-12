@@ -77,7 +77,7 @@ export default new Vuex.Store({
         default: {
           request = api.patches.getForGroup(id);
         }
-        request.then(patches => {
+        return request.then(patches => {
           context.commit(SET_PATCHES, patches);
         })
       }
