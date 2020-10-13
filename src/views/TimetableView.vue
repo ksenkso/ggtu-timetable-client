@@ -27,13 +27,12 @@
         >
           <div class="timetable__day-label">{{ dayNumber | dayName }}</div>
           <div class="timetable__lessons" v-if="day.length">
-            <div
-              class="timetable__lesson"
-              v-for="lesson in day"
+            <LessonView
+              v-for="(lesson, index) in day"
               :key="lesson.id"
-            >
-              <LessonView :lesson="lesson"></LessonView>
-            </div>
+              :lesson="lesson"
+              :index="index"
+            ></LessonView>
           </div>
           <Alert class="timetable__empty-day" v-else theme="warning">
             <h3>Самоподготовка</h3>
@@ -109,7 +108,6 @@ export default class TimetableView extends Vue {
   mounted() {
     (this.hasLoaded ? Promise.resolve() : this.loadTimetable()).then(() => {
       this.setHeights();
-      console.log(this.setHeights);
       document.documentElement.addEventListener('resize', this.setHeights);
     });
   }
@@ -191,7 +189,10 @@ export default class TimetableView extends Vue {
   &__lessons
     overflow: auto
     height: 100%
-    padding: 0 5px
+    padding: 0 5px 5px 0
+    display: flex
+    flex-direction: column
+    row-gap: 1rem
 
     &::-webkit-scrollbar
       border-radius: 4px
@@ -213,7 +214,4 @@ export default class TimetableView extends Vue {
 
     h3
       color: darken(theme-color("warning"), 30%)
-
-  &__lesson
-    margin-bottom: 1rem
 </style>
