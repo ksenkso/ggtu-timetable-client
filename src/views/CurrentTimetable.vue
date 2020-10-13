@@ -19,29 +19,21 @@
         :pagination-enabled="false"
       >
         <slide
-          v-for="(day, dayNumber) in currentWeek"
+          v-for="(day, dayNumber) in currentTimetable"
           class="timetable__day"
           :key="dayNumber"
         >
           <div class="timetable__day-label">{{ dayNumber | dayName }}</div>
-          <div>{{ lessonDate(dayNumber) }}</div>
-          <div class="timetable__lessons">
-            <div
-              class="timetable__lesson"
+          <div>{{ lessonDate(+dayNumber + 1) }}</div>
+          <div class="timetable__lessons" v-if="day.some(l => l.lesson)">
+            <LessonView
               v-for="(lesson, index) in day"
               :key="lesson.id"
-            >
-              <div v-if="getPatch(dayNumber, index)">
-                {{ getPatch(dayNumber, index).subject.name }}
-              </div>
-              <LessonView v-if="lesson" :lesson="lesson"></LessonView>
-            </div>
+              :lesson="lesson.lesson"
+              :index="index"
+            ></LessonView>
           </div>
-          <Alert
-            class="timetable__empty-day"
-            v-if="!day.length"
-            theme="warning"
-          >
+          <Alert class="timetable__empty-day" v-else theme="warning">
             <h3>Самоподготовка</h3>
           </Alert>
         </slide>
@@ -65,6 +57,14 @@ import {
   Week
 } from 'ggtu-timetable-api-client';
 import LessonView from '@/components/timetables/LessonView.vue';
+import { Lesson } from 'ggtu-timetable-api-client';
+import { v4 } from 'uuid';
+import Card from '@/components/common/Card.vue';
+
+export type MergedTimetable = Record<
+  string,
+  { id: string; lesson: Lesson | Patch | null }[]
+>;
 
 const dayNames: Record<string, string> = {
   [Day.Monday]: 'Пн',
@@ -86,7 +86,7 @@ function getCurrentWeek(weekStart: Date): number {
 
 @Component({
   name: 'CurrentTimetable',
-  components: { LessonView, Page, TimetableCard, ButtonGroup },
+  components: { Card, LessonView, Page, TimetableCard, ButtonGroup },
   filters: {
     dayName(index: string) {
       return dayNames[index];
@@ -111,6 +111,7 @@ export default class CurrentTimetable extends Vue {
   isDragging = false;
   appliedPatches: Record<string, Patch> = {};
   start = new Date();
+  currentTimetable: MergedTimetable = {};
 
   get weekNumber() {
     return getCurrentWeek(this.start);
@@ -132,22 +133,49 @@ export default class CurrentTimetable extends Vue {
     return {};
   }
 
-  getPatch(dayIndex: string, lessonIndex: number) {
-    const index = this.getPatchIndex(dayIndex, lessonIndex);
+  getPatch(dayIndex: string | number, lessonIndex: number, date?: Date) {
+    const index = this.getPatchIndex(dayIndex, lessonIndex, date);
     return this.appliedPatches[index];
   }
 
-  /*private mergeTimetable(
-    lessons: Record<string, (Lesson | null)[]>,
-    patches: Patch[]
-  ) {}*/
+  private mergeTimetable(): MergedTimetable {
+    const maxIndex = Math.max(
+      ...this.patches.map(patch => patch.index),
+      ...Object.keys(this.currentWeek).map(key =>
+        Math.max(
+          ...this.currentWeek[key].map(lesson => (lesson ? lesson.index : -1))
+        )
+      )
+    );
+    const timetable = {
+      [Day.Monday]: [],
+      [Day.Tuesday]: [],
+      [Day.Wednesday]: [],
+      [Day.Thursday]: [],
+      [Day.Friday]: [],
+      [Day.Saturday]: []
+    } as MergedTimetable;
+    // const date = new Date(this.start);
+    Object.keys(this.currentWeek).map(day => {
+      for (let i = 0; i <= maxIndex; i++) {
+        const patch = this.getPatch(day, i);
+        if (patch) {
+          timetable[day].push({ id: v4(), lesson: patch });
+        } else {
+          const lesson = this.currentWeek[day][i] || null;
+          timetable[day].push({ id: v4(), lesson });
+        }
+      }
+    });
+    return timetable;
+  }
 
   private getPatchIndex(
-    dayIndex: string,
+    dayIndex: string | number,
     lessonIndex: number,
     date: Date = new Date(this.start)
   ) {
-    date.setDate(date.getDate() + +dayIndex - 1);
+    date.setDate(date.getDate() + +dayIndex);
     return date.toLocaleDateString('ru-RU') + '_' + lessonIndex;
   }
 
@@ -180,8 +208,10 @@ export default class CurrentTimetable extends Vue {
         });
       })
       .then(() => {
+        this.applyPatches();
+        this.currentTimetable = this.mergeTimetable();
         this.$nextTick(() => {
-          this.applyPatches();
+          this.setHeights();
         });
 
         this.setHeights();
@@ -194,6 +224,7 @@ export default class CurrentTimetable extends Vue {
   }
 
   private setHeights() {
+    console.log(this.carousel.$children);
     const heights = [0, 0, 0, 0, 0, 0];
     this.carousel.$children.forEach(slide => {
       slide.$children.forEach((view, row) => {
@@ -209,7 +240,7 @@ export default class CurrentTimetable extends Vue {
     });
   }
 
-  lessonDate(day: string) {
+  lessonDate(day: number) {
     const date = new Date(this.start);
     date.setDate(date.getDate() + +day);
     return date.toLocaleDateString('ru-RU');
@@ -284,7 +315,7 @@ export default class CurrentTimetable extends Vue {
   &__lessons
     overflow: auto
     height: 100%
-    padding: 0 5px
+    padding: 0 5px 5px 0
 
     &::-webkit-scrollbar
       border-radius: 4px
