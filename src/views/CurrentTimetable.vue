@@ -1,8 +1,10 @@
 <template>
   <div class="timetable" v-if="hasLoaded">
-    <h3>Неделя {{ weekNumber }}</h3>
-    <Button @click.native="moveWeek(-1)">prev</Button>
-    <Button @click.native="moveWeek(1)">next</Button>
+    <div class="timetable__week-selector">
+      <Button @click.native="moveWeek(-1)">&lt;</Button>
+      <h3>Неделя {{ weekNumber }}</h3>
+      <Button @click.native="moveWeek(1)">&gt;</Button>
+    </div>
     <div :class="['timetable__week', { timetable__week_dragging: isDragging }]">
       <carousel
         ref="carousel"
@@ -24,7 +26,7 @@
           :key="dayNumber"
         >
           <div class="timetable__day-label">{{ dayNumber | dayName }}</div>
-          <div>{{ lessonDate(+dayNumber + 1) }}</div>
+          <div>{{ lessonDate(+dayNumber) }}</div>
           <div class="timetable__lessons" v-if="day.some(l => l.lesson)">
             <LessonView
               v-for="(lesson, index) in day"
@@ -191,6 +193,20 @@ export default class CurrentTimetable extends Vue {
     const newDate = new Date(this.start);
     newDate.setDate(this.start.getDate() + 7 * move);
     this.start = newDate;
+    this.updateCurrentTimetable();
+  }
+
+  updateCurrentTimetable() {
+    return this.loadPatches({
+      type: this.user.type,
+      id: this.user.entityId
+    }).then(() => {
+      this.applyPatches();
+      this.currentTimetable = this.mergeTimetable();
+      this.$nextTick(() => {
+        this.setHeights();
+      });
+    });
   }
 
   mounted() {
@@ -202,19 +218,13 @@ export default class CurrentTimetable extends Vue {
 
     (this.hasLoaded ? Promise.resolve() : this.loadTimetable())
       .then(() => {
-        return this.loadPatches({
-          type: this.user.type,
-          id: this.user.entityId
-        });
+        // return this.loadPatches({
+        //   type: this.user.type,
+        //   id: this.user.entityId
+        // });
+        return this.updateCurrentTimetable();
       })
       .then(() => {
-        this.applyPatches();
-        this.currentTimetable = this.mergeTimetable();
-        this.$nextTick(() => {
-          this.setHeights();
-        });
-
-        this.setHeights();
         document.documentElement.addEventListener('resize', this.setHeights);
       });
   }
@@ -275,6 +285,13 @@ export default class CurrentTimetable extends Vue {
 .timetable
   display: flex
   flex-direction: column
+
+  &__week-selector
+    display: flex
+    justify-content: space-around
+    align-items: center
+    h3
+      text-align: center
 
 
   .button-group
