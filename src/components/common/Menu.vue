@@ -56,7 +56,7 @@ export default class Menu extends Vue {
 
   @media (max-width: 960px)
     flex-direction: row
-    padding: 1rem
+    padding: 0
     box-shadow: 0 -2px 5px 0 rgba(0, 0, 0, .13)
     align-items: center
     justify-content: space-evenly
@@ -67,4 +67,10 @@ export default class Menu extends Vue {
     z-index: 9999
     &__item
       margin-bottom: 0
+      @media (max-width: 960px)
+        padding: 1rem
+        display: inline-block
+        border-right: 1px solid #dddddd
+        &:last-child
+          border-right: none
 </style>
