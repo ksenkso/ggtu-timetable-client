@@ -8,11 +8,13 @@ import Alert from '@/components/common/Alert.vue';
 // @ts-ignore
 import VueCarousel from 'vue-carousel';
 import { Cabinet, LessonType } from 'ggtu-timetable-api-client';
+import Badge from './components/common/Badge.vue';
 
 Vue.use(VueCarousel);
 Vue.config.productionTip = false;
 Vue.component('Button', Button);
 Vue.component('Alert', Alert);
+Vue.component('Badge', Badge);
 Vue.filter('lessonType', (type: LessonType) => {
   switch (type) {
     case LessonType.Empty:
