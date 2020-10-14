@@ -41,36 +41,38 @@ export default class Menu extends Vue {
 .menu
   background-color: #ffffff
   box-shadow: 2px 0 5px 0 rgba(0, 0, 0, .13)
-  padding: 2rem 1rem
+  padding: 2rem 0
   display: flex
   flex-direction: column
 
   &__item
-    color: #000
     text-decoration: none
-    margin-bottom: 1rem
+    color: #000
+    padding: .5rem 1rem
 
-    &_active, &:hover, &:active
-      text-decoration: underline
+    &_active, &:active
       color: theme-color("primary")
+      font-weight: bolder
+    &:hover
+      text-decoration: underline
+    &_active:hover
+      text-decoration: none
 
   @media (max-width: 960px)
     flex-direction: row
     padding: 0
     box-shadow: 0 -2px 5px 0 rgba(0, 0, 0, .13)
-    align-items: center
     justify-content: space-evenly
     position: fixed
     width: 100%
     bottom: 0
-
     z-index: 9999
     &__item
+      flex: 1 1 100%
       margin-bottom: 0
-      @media (max-width: 960px)
-        padding: 1rem
-        display: inline-block
-        border-right: 1px solid #dddddd
-        &:last-child
-          border-right: none
+      padding: 1rem
+      border-right: 1px solid #dddddd
+      text-align: center
+      &:last-child
+        border-right: none
 </style>
