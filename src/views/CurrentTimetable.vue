@@ -22,12 +22,12 @@
       >
         <slide
           v-for="(day, dayNumber) in currentTimetable"
-          class="timetable__day"
+          class="timetable__day day"
           :key="dayNumber"
         >
-          <div class="timetable__day-label">{{ dayNumber | dayName }}</div>
-          <div>{{ lessonDate(+dayNumber) }}</div>
-          <div class="timetable__lessons" v-if="day.some(l => l.lesson)">
+          <div class="day__label">{{ dayNumber | dayName }}</div>
+          <div class="day__date">{{ lessonDate(+dayNumber) }}</div>
+          <div class="day__lessons" v-if="day.some(l => l.lesson)">
             <LessonView
               v-for="(lesson, index) in day"
               :key="lesson.id"
@@ -308,12 +308,6 @@ export default class CurrentTimetable extends Vue {
       width: calc(100% - 1rem)
       z-index: 9999
 
-  &__day-label
-    text-align: center
-    margin-bottom: 1rem
-    font-weight: bold
-    font-size: 24px
-
   &__week
     overflow: hidden
     cursor: grab
@@ -322,27 +316,34 @@ export default class CurrentTimetable extends Vue {
       cursor: grabbing
 
 
-  &__day
+  .day
     max-width: calc(100vw - 1rem)
     padding: 0 .5rem
     height: 100%
     display: flex
     flex-direction: column
+    &__label
+      text-align: center
+      margin-bottom: 1rem
+      font-weight: bold
+      font-size: 1.5em
+    &__date
+      text-align: center
+      padding: 0 0 .3rem 0
+    &__lessons
+      overflow: auto
+      height: 100%
+      padding: 0 5px 5px 5px
 
-  &__lessons
-    overflow: auto
-    height: 100%
-    padding: 0 5px 5px 0
+      &::-webkit-scrollbar
+        border-radius: 4px
+        width: 8px
+        overflow: hidden
 
-    &::-webkit-scrollbar
-      border-radius: 4px
-      width: 8px
-      overflow: hidden
+      &::-webkit-scrollbar-thumb
+        background-color: #ccc
 
-    &::-webkit-scrollbar-thumb
-      background-color: #ccc
-
-      border-radius: 4px
+        border-radius: 4px
 
   &__empty-day
     display: flex
@@ -356,6 +357,4 @@ export default class CurrentTimetable extends Vue {
     h3
       color: darken(theme-color("warning"), 30%)
 
-  &__lesson
-    margin-bottom: 1rem
 </style>

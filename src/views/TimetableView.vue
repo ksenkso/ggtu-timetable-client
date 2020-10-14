@@ -22,11 +22,11 @@
       >
         <slide
           v-for="(day, dayNumber) in currentWeek"
-          class="timetable__day"
+          class="day"
           :key="dayNumber"
         >
-          <div class="timetable__day-label">{{ dayNumber | dayName }}</div>
-          <div class="timetable__lessons" v-if="day.length">
+          <div class="day__label">{{ dayNumber | dayName }}</div>
+          <div class="day__lessons" v-if="day.length">
             <LessonView
               v-for="(lesson, index) in day"
               :key="lesson.id"
@@ -150,7 +150,6 @@ export default class TimetableView extends Vue {
   display: flex
   flex-direction: column
 
-
   .button-group
     margin-left: auto
     max-width: 180px
@@ -179,29 +178,31 @@ export default class TimetableView extends Vue {
       cursor: grabbing
 
 
-  &__day
+  .day
     max-width: calc(100vw - 1rem)
     padding: 0 .5rem
     height: 100%
     display: flex
     flex-direction: column
+    &__label
+      text-align: center
+      margin-bottom: 1rem
+      font-weight: bold
+      font-size: 24px
+    &__lessons
+      overflow: auto
+      height: 100%
+      padding: 0 5px 5px 5px
 
-  &__lessons
-    overflow: auto
-    height: 100%
-    padding: 0 5px 5px 0
-    display: flex
-    flex-direction: column
-    row-gap: 1rem
+      &::-webkit-scrollbar
+        border-radius: 4px
+        width: 8px
+        overflow: hidden
 
-    &::-webkit-scrollbar
-      border-radius: 4px
-      width: 8px
-      overflow: hidden
+      &::-webkit-scrollbar-thumb
+        background-color: #ccc
 
-    &::-webkit-scrollbar-thumb
-      background-color: #ccc
-      border-radius: 4px
+        border-radius: 4px
 
   &__empty-day
     display: flex

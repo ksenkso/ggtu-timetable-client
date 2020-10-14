@@ -2,8 +2,8 @@
   <Card
     :theme="!lesson && 'warning'"
     :class="[
-      'timetable__lesson',
-      { timetable__lesson_patch: this.lesson && !this.lesson.isRegular }
+      'day__lesson',
+      { day__lesson_patch: this.lesson && !this.lesson.isRegular }
     ]"
   >
     <template slot="header">
@@ -61,6 +61,8 @@ export default class LessonView extends Vue {
 
 <style lang="sass">
 @import "../../assets/functions"
+.day__lesson
+  margin-bottom: 1rem
 .card__header
   display: flex
   align-items: center
