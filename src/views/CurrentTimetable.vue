@@ -1,10 +1,6 @@
 <template>
   <div class="timetable" v-if="hasLoaded">
-    <div class="timetable__week-selector">
-      <Button @click.native="moveWeek(-1)">&lt;</Button>
-      <h3>Неделя {{ weekNumber }}</h3>
-      <Button @click.native="moveWeek(1)">&gt;</Button>
-    </div>
+    <WeekSelector :start-week="weekNumber" @change="moveWeek"></WeekSelector>
     <div :class="['timetable__week', { timetable__week_dragging: isDragging }]">
       <carousel
         ref="carousel"
@@ -49,19 +45,17 @@ import { Component, Ref, Vue } from 'vue-property-decorator';
 import { Action, State } from 'vuex-class';
 import Page from '@/components/common/Page.vue';
 import { LOAD_DEFAULT_TIMETABLE, LOAD_PATCHES } from '@/store/action-types';
-import TimetableCard from '@/components/timetables/TimetableCard.vue';
-import ButtonGroup from '@/components/common/ButtonGroup.vue';
 import {
   Day,
   EntityType,
+  Lesson,
   Patch,
   RegularTimetable,
   Week
 } from 'ggtu-timetable-api-client';
 import LessonView from '@/components/timetables/LessonView.vue';
-import { Lesson } from 'ggtu-timetable-api-client';
 import { v4 } from 'uuid';
-import Card from '@/components/common/Card.vue';
+import WeekSelector from '@/components/timetables/WeekSelector.vue';
 
 export type MergedTimetable = Record<
   string,
@@ -83,12 +77,11 @@ function getCurrentWeek(weekStart: Date): number {
   start.setDate(start.getDate() + startDay === 0 ? 0 : 8 - startDay);
   const week = 7 * 24 * 60 * 60 * 1000;
   return ((+weekStart - +start) / week) | 0;
-  // return weekNumber % 2 === 0 ? Week.Top : Week.Bottom;
 }
 
 @Component({
   name: 'CurrentTimetable',
-  components: { Card, LessonView, Page, TimetableCard, ButtonGroup },
+  components: { LessonView, Page, WeekSelector },
   filters: {
     dayName(index: string) {
       return dayNames[index];
@@ -234,7 +227,6 @@ export default class CurrentTimetable extends Vue {
   }
 
   private setHeights() {
-    console.log(this.carousel.$children);
     const heights = [0, 0, 0, 0, 0, 0];
     this.carousel.$children.forEach(slide => {
       slide.$children.forEach((view, row) => {
@@ -356,5 +348,4 @@ export default class CurrentTimetable extends Vue {
 
     h3
       color: darken(theme-color("warning"), 30%)
-
 </style>
