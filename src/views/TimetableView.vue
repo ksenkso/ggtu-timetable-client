@@ -30,7 +30,7 @@
             <LessonView
               v-for="(lesson, index) in day"
               :key="lesson.id"
-              :lesson="lesson"
+              :lesson="lesson.lesson"
               :index="index"
             ></LessonView>
           </div>
