@@ -50,12 +50,12 @@ import {
   EntityType,
   Lesson,
   Patch,
-  RegularTimetable,
   Week
 } from 'ggtu-timetable-api-client';
 import LessonView from '@/components/timetables/LessonView.vue';
 import { v4 } from 'uuid';
 import WeekSelector from '@/components/timetables/WeekSelector.vue';
+import { KeyedTimetable } from '@/store';
 
 export type MergedTimetable = Record<
   string,
@@ -90,7 +90,7 @@ function getCurrentWeek(weekStart: Date): number {
 })
 export default class CurrentTimetable extends Vue {
   @State(state => state.user) user!: { type: EntityType; entityId: number };
-  @State(state => state.timetable.default) timetable!: RegularTimetable;
+  @State(state => state.timetable.default) timetable!: KeyedTimetable;
   @State(state => state.timetable.patches) patches!: Patch[];
   @State(state => state.timetable.hasLoaded) hasLoaded!: boolean;
   @Action(LOAD_DEFAULT_TIMETABLE) loadTimetable!: () => Promise<void>;
@@ -138,7 +138,9 @@ export default class CurrentTimetable extends Vue {
       ...this.patches.map(patch => patch.index),
       ...Object.keys(this.currentWeek).map(key =>
         Math.max(
-          ...this.currentWeek[key].map(lesson => (lesson ? lesson.index : -1))
+          ...this.currentWeek[key].map(lesson =>
+            lesson.lesson ? lesson.lesson.index : -1
+          )
         )
       )
     );
@@ -150,16 +152,20 @@ export default class CurrentTimetable extends Vue {
       [Day.Friday]: [],
       [Day.Saturday]: []
     } as MergedTimetable;
-    // const date = new Date(this.start);
     Object.keys(this.currentWeek).map(day => {
       for (let i = 0; i <= maxIndex; i++) {
         const patch = this.getPatch(day, i);
         if (patch) {
           timetable[day].push({ id: v4(), lesson: patch });
         } else {
-          const lesson = this.currentWeek[day][i] || null;
+          const lesson =
+            (this.currentWeek[day][i] && this.currentWeek[day][i].lesson) ||
+            null;
           timetable[day].push({ id: v4(), lesson });
         }
+      }
+      while (!timetable[day][timetable[day].length - 1].lesson) {
+        timetable[day].pop();
       }
     });
     return timetable;
@@ -303,6 +309,9 @@ export default class CurrentTimetable extends Vue {
   &__week
     overflow: hidden
     cursor: grab
+    @media (max-width: 960px)
+      // add bottom padding for menu and week selector
+      padding-bottom: 99px
 
     &_dragging
       cursor: grabbing
@@ -325,7 +334,7 @@ export default class CurrentTimetable extends Vue {
     &__lessons
       overflow: auto
       height: 100%
-      padding: 0 5px 5px 5px
+      padding: 5px
 
       &::-webkit-scrollbar
         border-radius: 4px

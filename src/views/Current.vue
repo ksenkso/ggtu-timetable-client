@@ -9,7 +9,6 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
 import Page from '@/components/common/Page.vue';
-import TimetableView from '@/views/TimetableView.vue';
 import CurrentTimetable from './CurrentTimetable.vue';
 
 @Component({
