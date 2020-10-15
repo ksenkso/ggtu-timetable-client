@@ -10,11 +10,17 @@ import {
 import api from '@/api';
 import { LOAD_DEFAULT_TIMETABLE, LOAD_PATCHES } from '@/store/action-types';
 import { EntityType, Patch, RegularTimetable } from 'ggtu-timetable-api-client';
+import { Week } from 'ggtu-timetable-api-client/src/interfaces/index';
+import { Lesson } from 'ggtu-timetable-api-client/src/interfaces/index';
+import { v4 } from 'uuid';
 
 Vue.use(Vuex);
 const USER_TYPE_KEY = 'ggtu_timetable/user_type';
 const USER_PREFERRED_ENTITY_KEY = 'ggtu_timetable/user_entity';
-
+export type KeyedTimetable = Record<
+  string,
+  Record<string, { id: string; lesson: Lesson | null }[]>
+>;
 export default new Vuex.Store({
   state: {
     user: {
@@ -22,7 +28,7 @@ export default new Vuex.Store({
       entityId: +(localStorage.getItem(USER_PREFERRED_ENTITY_KEY) || 0)
     },
     timetable: {
-      default: {} as RegularTimetable,
+      default: {} as KeyedTimetable,
       hasLoaded: false,
       patches: [] as Patch[]
     }
@@ -37,7 +43,18 @@ export default new Vuex.Store({
       state.user.entityId = id;
     },
     [SET_DEFAULT_TIMETABLE](state, timetable: RegularTimetable) {
-      state.timetable.default = timetable;
+      const mapped = {} as KeyedTimetable;
+      Object.keys(timetable).forEach(week => {
+        mapped[week] = {};
+        const currentWeek = timetable[(week as unknown) as Week];
+        Object.keys(currentWeek).forEach(day => {
+          mapped[week][day] = currentWeek[day].map(lesson => ({
+            id: v4(),
+            lesson
+          }));
+        });
+      });
+      state.timetable.default = mapped;
     },
     [SET_TIMETABLE_LOADED](state, hasLoaded: boolean) {
       state.timetable.hasLoaded = hasLoaded;
@@ -74,12 +91,13 @@ export default new Vuex.Store({
           request = api.patches.getForCabinet(id);
           break;
         }
-        default: {
-          request = api.patches.getForGroup(id);
-        }
-        return request.then(patches => {
-          context.commit(SET_PATCHES, patches);
-        })
+        default:
+          {
+            request = api.patches.getForGroup(id);
+          }
+          return request.then(patches => {
+            context.commit(SET_PATCHES, patches);
+          });
       }
     }
   },
