@@ -66,7 +66,9 @@ export default class Menu extends Vue {
     position: fixed
     width: 100%
     bottom: 0
-    z-index: 9999
+    z-index: 100
+    max-height: 56px
+    align-items: center
     &__item
       flex: 1 1 100%
       margin-bottom: 0

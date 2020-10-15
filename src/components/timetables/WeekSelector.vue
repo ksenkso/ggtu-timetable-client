@@ -36,7 +36,8 @@ export default class WeekSelector extends Vue {
     text-align: center
   @media (max-width: 960px)
     position: fixed
-    bottom: 51px
+    bottom: 56px
+    z-index: 100
     left: 0
     width: 100%
     background-color: #fff
