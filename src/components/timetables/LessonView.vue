@@ -23,9 +23,6 @@
         </p>
       </div>
       <div class="card__row">
-        <p></p>
-      </div>
-      <div class="card__row">
         <ul class="list">
           <li
             class="list__item"
