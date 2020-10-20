@@ -281,4 +281,7 @@ export default class CurrentTimetable extends Vue {
 
     h3
       text-align: center
+  .day
+    &__date
+      text-align: center
 </style>
