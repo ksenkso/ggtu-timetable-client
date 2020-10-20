@@ -269,92 +269,12 @@ export default class CurrentTimetable extends Vue {
 </script>
 
 <style lang="sass">
-@import "../assets/functions"
-@import "../assets/variables"
-.VueCarousel
-  height: 100%
-
-  &-inner
-    height: 100% !important
-
-.container
-  height: calc(100vh - #{$header-height} - 64px) !important
-
+@import "../assets/common/timetable"
 .timetable
-  display: flex
-  flex-direction: column
-
   &__week-selector
     display: flex
     justify-content: space-around
     align-items: center
     h3
       text-align: center
-
-
-  .button-group
-    margin-left: auto
-    max-width: 180px
-    margin-bottom: 1rem
-    @media (max-width: 768px)
-      max-width: 100%
-      margin-left: 0
-      order: 1
-      margin-bottom: 0
-      position: fixed
-      bottom: 64px
-      width: calc(100% - 1rem)
-      z-index: 9999
-
-  &__week
-    overflow: hidden
-    cursor: grab
-    @media (max-width: 960px)
-      // add bottom padding for menu and week selector
-      padding-bottom: 99px
-
-    &_dragging
-      cursor: grabbing
-
-
-  .day
-    max-width: calc(100vw - 1rem)
-    padding: 0 .5rem
-    height: 100%
-    display: flex
-    flex-direction: column
-    &__label
-      text-align: center
-      margin-bottom: 1rem
-      font-weight: bold
-      font-size: 1.5em
-    &__date
-      text-align: center
-      padding: 0 0 .3rem 0
-    &__lessons
-      overflow: auto
-      height: 100%
-      padding: 5px
-
-      &::-webkit-scrollbar
-        border-radius: 4px
-        width: 8px
-        overflow: hidden
-
-      &::-webkit-scrollbar-thumb
-        background-color: #ccc
-
-        border-radius: 4px
-
-  &__empty-day
-    display: flex
-    align-items: center
-    justify-content: center
-    height: 180px
-
-    &.alert
-      margin-top: 0 !important
-
-    h3
-      color: darken(theme-color("warning"), 30%)
 </style>
