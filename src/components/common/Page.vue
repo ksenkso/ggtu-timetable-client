@@ -37,12 +37,15 @@ export default class Page extends Vue {
   position: relative
   &__content
     grid-area: content
+    overflow: auto
   .menu
     grid-area: menu
   .header
     grid-area: header
   @media (max-width: 960px)
-    grid-template-columns: 100vw
+    height: auto
+    overflow: auto
+    grid-template-columns: auto
     grid-template-rows: #{$header-height} 1fr #{48 + 64}px
     grid-template-areas: "header" "content" "menu"
 </style>

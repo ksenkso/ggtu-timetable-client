@@ -6,6 +6,16 @@
       :values="weeks"
     ></ButtonGroup>
     <div :class="['timetable__week', { timetable__week_dragging: isDragging }]">
+      <div class="timetable__order" ref="lessonNumbers">
+        <div
+          class="timetable__lesson-number"
+          v-for="index in maxIndex + 1"
+          :key="index"
+          ref="lessonNumber"
+        >
+          {{ index }}
+        </div>
+      </div>
       <carousel
         ref="carousel"
         @mousedown.native="startDragging"
@@ -48,12 +58,12 @@ import { Component, Ref, Vue } from 'vue-property-decorator';
 import { Action, State } from 'vuex-class';
 import Page from '@/components/common/Page.vue';
 import { LOAD_DEFAULT_TIMETABLE } from '@/store/action-types';
-import TimetableCard from '@/components/timetables/TimetableCard.vue';
 import ButtonGroup, {
   ButtonGroupValue
 } from '@/components/common/ButtonGroup.vue';
-import { Day, RegularTimetable, Week } from 'ggtu-timetable-api-client';
+import { Day, Week } from 'ggtu-timetable-api-client';
 import LessonView from '@/components/timetables/LessonView.vue';
+import { KeyedTimetable } from '@/store';
 
 const dayNames: Record<string, string> = {
   [Day.Monday]: 'Пн',
@@ -66,7 +76,7 @@ const dayNames: Record<string, string> = {
 
 @Component({
   name: 'TimetableView',
-  components: { LessonView, Page, TimetableCard, ButtonGroup },
+  components: { LessonView, Page, ButtonGroup },
   filters: {
     dayName(index: string) {
       return dayNames[index];
@@ -74,15 +84,29 @@ const dayNames: Record<string, string> = {
   }
 })
 export default class TimetableView extends Vue {
-  @State(state => state.timetable.default) timetable!: RegularTimetable;
+  @State(state => state.timetable.default) timetable!: KeyedTimetable;
   @State(state => state.timetable.hasLoaded) hasLoaded!: boolean;
   @Action(LOAD_DEFAULT_TIMETABLE) loadTimetable!: () => Promise<void>;
   @Ref('carousel') carousel!: Vue;
+  @Ref('lessonNumber') lessonNumber!: HTMLElement[];
+  @Ref('lessonNumbers') lessonNumbers!: HTMLElement;
   week = Week.Top;
   isDragging = false;
 
   get weeks() {
     return ['Верхняя', 'Нижняя'];
+  }
+
+  get maxIndex() {
+    return Math.max(
+      ...Object.keys(this.currentWeek).map(key => {
+        return Math.max(
+          ...this.currentWeek[key].map(entry =>
+            entry.lesson ? entry.lesson.index : -1
+          )
+        );
+      })
+    );
   }
 
   get currentWeek() {
@@ -125,9 +149,11 @@ export default class TimetableView extends Vue {
         }
       });
     });
+
     this.carousel.$children.forEach(slide => {
       slide.$children.forEach((view, row) => {
         (view.$el as HTMLElement).style.height = `${heights[row]}px`;
+        this.lessonNumber[row].style.height = `${heights[row]}px`;
       });
     });
   }
@@ -135,26 +161,24 @@ export default class TimetableView extends Vue {
 </script>
 
 <style lang="sass">
-@import "../assets/functions"
+@import "../assets/common/timetable"
 @import "../assets/variables"
-.VueCarousel
-  height: 100%
-
-  &-inner
-    height: 100% !important
-
-.container
-  height: calc(100vh - #{$header-height} - 64px) !important
-
 .timetable
-  display: flex
-  flex-direction: column
+  padding-top: 3rem
+  @media (max-width: 768px)
+    padding-top: 0
 
   .button-group
     margin-left: auto
     max-width: 180px
     margin-bottom: 1rem
+    position: fixed
+    right: 2rem
+    top: #{$header-height + 8px}
+    z-index: 1
     @media (max-width: 768px)
+      right: auto
+      top: auto
       max-width: 100%
       margin-left: 0
       order: 1
@@ -163,56 +187,4 @@ export default class TimetableView extends Vue {
       bottom: 64px
       width: calc(100% - 1rem)
       z-index: 9999
-
-  &__day-label
-    text-align: center
-    margin-bottom: 1rem
-    font-weight: bold
-    font-size: 24px
-
-  &__week
-    overflow: hidden
-    cursor: grab
-
-    &_dragging
-      cursor: grabbing
-
-
-  .day
-    max-width: calc(100vw - 1rem)
-    padding: 0 .5rem
-    height: 100%
-    display: flex
-    flex-direction: column
-    &__label
-      text-align: center
-      margin-bottom: 1rem
-      font-weight: bold
-      font-size: 24px
-    &__lessons
-      overflow: auto
-      height: 100%
-      padding: 0 5px 5px 5px
-
-      &::-webkit-scrollbar
-        border-radius: 4px
-        width: 8px
-        overflow: hidden
-
-      &::-webkit-scrollbar-thumb
-        background-color: #ccc
-
-        border-radius: 4px
-
-  &__empty-day
-    display: flex
-    align-items: center
-    justify-content: center
-    height: 180px
-
-    &.alert
-      margin-top: 0 !important
-
-    h3
-      color: darken(theme-color("warning"), 30%)
 </style>
