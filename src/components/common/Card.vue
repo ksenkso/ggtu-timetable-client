@@ -1,6 +1,6 @@
 <template>
   <div :class="className">
-    <h2 class="card__header">
+    <h2 class="card__header" v-if="!noHeader">
       <slot name="header"></slot>
     </h2>
     <div class="card__content">
@@ -21,7 +21,7 @@ import { Prop } from 'vue-property-decorator';
 })
 export default class Card extends Vue {
   @Prop() theme?: string;
-
+  @Prop() noHeader?: boolean;
   get className() {
     const classes = ['card'];
     if (this.theme) {
