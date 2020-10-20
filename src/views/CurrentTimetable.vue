@@ -164,7 +164,10 @@ export default class CurrentTimetable extends Vue {
           timetable[day].push({ id: v4(), lesson });
         }
       }
-      while (!timetable[day][timetable[day].length - 1].lesson) {
+      while (
+        timetable[day].length &&
+        !timetable[day][timetable[day].length - 1].lesson
+      ) {
         timetable[day].pop();
       }
     });
@@ -275,6 +278,7 @@ export default class CurrentTimetable extends Vue {
     display: flex
     justify-content: space-around
     align-items: center
+
     h3
       text-align: center
 </style>
