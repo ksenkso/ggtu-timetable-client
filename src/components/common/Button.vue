@@ -42,7 +42,7 @@ export default class Button extends Vue {
   text-decoration: none
   line-height: 1.6
   font-size: 1rem
-
+  user-select: none
   &[disabled]
     filter: grayscale(70%)
     color: theme-color("light")
