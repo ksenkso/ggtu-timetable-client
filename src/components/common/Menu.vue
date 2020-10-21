@@ -9,29 +9,27 @@
       :to="item.to"
       >{{ item.name }}
     </router-link>
+    <button class="menu__close" @click="close"></button>
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
+import { namespace } from 'vuex-class';
+
+const menu = namespace('menu');
 
 @Component({
   name: 'Menu'
 })
 export default class Menu extends Vue {
+  @menu.State('isOpen') isOpen!: boolean;
+  @menu.Action('CLOSE') close!: () => void;
+
   items = [
     { name: 'Моё расписание', to: '/' },
     { name: 'Текущее расписание', to: '/current' }
   ];
-  isOpen = false;
-
-  open() {
-    this.isOpen = true;
-  }
-
-  close() {
-    this.isOpen = false;
-  }
 }
 </script>
 
@@ -44,6 +42,22 @@ export default class Menu extends Vue {
   padding: 2rem 0
   display: flex
   flex-direction: column
+  max-width: 80%
+
+  &__close
+    display: none
+    cursor: pointer
+    background-color: transparent
+    background-image: url(../../assets/close.svg)
+    background-repeat: no-repeat
+    background-position: 50%
+    border: none
+    padding: 2rem
+    margin-top: auto
+    @media (max-width: 960px)
+      display: block
+    &:active
+      outline-color: theme-color("primary")
 
   &__item
     text-decoration: none
@@ -52,29 +66,28 @@ export default class Menu extends Vue {
 
     &_active, &:active
       color: theme-color("primary")
-      font-weight: bolder
+
     &:hover
       text-decoration: underline
+
     &_active:hover
       text-decoration: none
 
   @media (max-width: 960px)
-    flex-direction: row
+    //flex-direction: row
     padding: 0
     box-shadow: 0 -2px 5px 0 rgba(0, 0, 0, .13)
-    justify-content: space-evenly
     position: fixed
     width: 100%
     bottom: 0
+    left: 0
+    transform: translateX(-105%)
+    transition: transform .3s ease-in-out
+    height: 100%
     z-index: 100
-    max-height: 56px
-    align-items: center
+    &_open
+      transform: translateX(0)
     &__item
-      flex: 1 1 100%
       margin-bottom: 0
       padding: 1rem
-      border-right: 1px solid #dddddd
-      text-align: center
-      &:last-child
-        border-right: none
 </style>

@@ -12,6 +12,8 @@ html, body
   padding: 0
   height: 100%
   font-family: Tahoma, Arial, sans-serif
+body.menu-open
+  overflow: hidden
 *
   box-sizing: border-box
 </style>
