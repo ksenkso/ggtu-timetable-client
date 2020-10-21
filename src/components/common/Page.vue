@@ -32,7 +32,7 @@ export default class Page extends Vue {
   height: 100%
   display: grid
   grid-template-rows: #{$header-height} 1fr
-  grid-template-columns: 180px calc(100vw - 180px)
+  grid-template-columns: 240px calc(100vw - 240px)
   grid-template-areas: "header header" "menu content"
   position: relative
   &__content
