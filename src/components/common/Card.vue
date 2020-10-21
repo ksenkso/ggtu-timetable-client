@@ -62,6 +62,8 @@ export default class Card extends Vue {
       font-size: 2rem
       font-weight: bold
       color: #333333
+      @media (max-width: 430px)
+        font-size: 1.4rem
 
   &__header
     border-bottom: 1px solid #ddd
