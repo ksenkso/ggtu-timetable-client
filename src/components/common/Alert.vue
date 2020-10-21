@@ -34,7 +34,7 @@ export default class Alert extends Vue {
     @each $mod, $color in $colors
       &-#{$mod}
         background: rgba($color, .3)
-        color: #000
+        color: #222
         border-color: rgba($color, 0.3)
         @if ($mod == "light")
           border: 1px solid theme-color("gray")

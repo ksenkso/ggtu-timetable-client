@@ -42,8 +42,6 @@ export default class Menu extends Vue {
   padding: 2rem 0
   display: flex
   flex-direction: column
-  max-width: 80%
-
   &__close
     display: none
     cursor: pointer
@@ -61,7 +59,7 @@ export default class Menu extends Vue {
 
   &__item
     text-decoration: none
-    color: #000
+    color: #222
     padding: .5rem 1rem
 
     &_active, &:active
@@ -74,7 +72,7 @@ export default class Menu extends Vue {
       text-decoration: none
 
   @media (max-width: 960px)
-    //flex-direction: row
+    max-width: 80%
     padding: 0
     box-shadow: 0 -2px 5px 0 rgba(0, 0, 0, .13)
     position: fixed
