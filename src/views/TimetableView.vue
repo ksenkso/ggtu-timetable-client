@@ -1,10 +1,6 @@
 <template>
   <div class="timetable" v-if="hasLoaded">
-    <ButtonGroup
-      @change="changeWeek"
-      :default-index="0"
-      :values="weeks"
-    ></ButtonGroup>
+    <TimetableWeek @change="changeWeek"></TimetableWeek>
     <div :class="['timetable__week', { timetable__week_dragging: isDragging }]">
       <div class="timetable__order" ref="lessonNumbers">
         <div
@@ -58,12 +54,11 @@ import { Component, Ref, Vue } from 'vue-property-decorator';
 import { Action, State } from 'vuex-class';
 import Page from '@/components/common/Page.vue';
 import { LOAD_DEFAULT_TIMETABLE } from '@/store/action-types';
-import ButtonGroup, {
-  ButtonGroupValue
-} from '@/components/common/ButtonGroup.vue';
+import { ButtonGroupValue } from '@/components/common/ButtonGroup.vue';
 import { Day, Week } from 'ggtu-timetable-api-client';
 import LessonView from '@/components/timetables/LessonView.vue';
 import { KeyedTimetable } from '@/store';
+import TimetableWeek from '@/components/timetables/TimetableWeek.vue';
 
 const dayNames: Record<string, string> = {
   [Day.Monday]: 'Пн',
@@ -76,7 +71,7 @@ const dayNames: Record<string, string> = {
 
 @Component({
   name: 'TimetableView',
-  components: { LessonView, Page, ButtonGroup },
+  components: { LessonView, Page, TimetableWeek },
   filters: {
     dayName(index: string) {
       return dayNames[index];
@@ -162,29 +157,9 @@ export default class TimetableView extends Vue {
 
 <style lang="sass">
 @import "../assets/common/timetable"
-@import "../assets/variables"
+
 .timetable
   padding-top: 3rem
   @media (max-width: 768px)
     padding-top: 0
-
-  .button-group
-    margin-left: auto
-    max-width: 180px
-    margin-bottom: 1rem
-    position: fixed
-    right: 2rem
-    top: #{$header-height + 8px}
-    z-index: 1
-    @media (max-width: 768px)
-      right: auto
-      top: auto
-      max-width: 100%
-      margin-left: 0
-      order: 1
-      margin-bottom: 0
-      position: fixed
-      bottom: 64px
-      width: calc(100% - 1rem)
-      z-index: 9999
 </style>
