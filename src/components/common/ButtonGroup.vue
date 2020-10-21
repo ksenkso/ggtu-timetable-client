@@ -52,6 +52,7 @@ export default class ButtonGroup extends Vue {
   border: 1px solid #aaa
   margin-top: .5rem
   margin-bottom: .5rem
+  z-index: 10
 
   &__button
     display: inline-block
