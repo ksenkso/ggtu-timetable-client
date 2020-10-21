@@ -33,7 +33,7 @@ export default class Header extends Vue {
 @import "../../assets/functions"
 .header
   color: #ffffff
-  background-color: theme-color("primary")
+  background-image: linear-gradient(to right, nth($gradient-colors, 1) -40%, nth($gradient-colors, 2) 120%)
   padding: 0 1rem
   display: flex
   align-items: center
