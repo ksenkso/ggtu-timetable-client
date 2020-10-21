@@ -2,6 +2,16 @@
   <div class="timetable" v-if="hasLoaded">
     <WeekSelector :start-week="weekNumber" @change="moveWeek"></WeekSelector>
     <div :class="['timetable__week', { timetable__week_dragging: isDragging }]">
+      <div class="timetable__order" ref="lessonNumbers">
+        <div
+          class="timetable__lesson-number"
+          v-for="index in maxIndex + 1"
+          :key="index"
+          ref="lessonNumber"
+        >
+          {{ index }}
+        </div>
+      </div>
       <carousel
         ref="carousel"
         @mousedown.native="startDragging"
@@ -101,6 +111,8 @@ export default class CurrentTimetable extends Vue {
     type: EntityType;
     id: number;
   }) => Promise<void>;
+  @Ref('lessonNumber') lessonNumber!: HTMLElement[];
+  // @Ref('lessonNumbers') lessonNumbers!: HTMLElement;
   @Ref('carousel') carousel!: Vue;
   // week = Week.Top;
   isDragging = false;
@@ -126,6 +138,18 @@ export default class CurrentTimetable extends Vue {
 
   get swiperOptions() {
     return {};
+  }
+
+  get maxIndex() {
+    return Math.max(
+      ...Object.keys(this.currentWeek).map(key => {
+        return Math.max(
+          ...this.currentWeek[key].map(entry =>
+            entry.lesson ? entry.lesson.index : -1
+          )
+        );
+      })
+    );
   }
 
   getPatch(dayIndex: string | number, lessonIndex: number, date?: Date) {
@@ -247,6 +271,7 @@ export default class CurrentTimetable extends Vue {
     this.carousel.$children.forEach(slide => {
       slide.$children.forEach((view, row) => {
         (view.$el as HTMLElement).style.height = `${heights[row]}px`;
+        this.lessonNumber[row].style.height = `${heights[row]}px`;
       });
     });
   }
@@ -278,6 +303,8 @@ export default class CurrentTimetable extends Vue {
     display: flex
     justify-content: space-around
     align-items: center
+  &__order
+    top: 64px
 
     h3
       text-align: center

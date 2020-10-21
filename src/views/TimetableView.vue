@@ -40,9 +40,9 @@
               :index="index"
             ></LessonView>
           </div>
-          <Alert class="timetable__empty-day" v-else theme="warning">
-            <h3>Самоподготовка</h3>
-          </Alert>
+          <div class="timetable__empty-day" v-else>
+            <Card class="card_striped" theme="warning">Самоподготовка</Card>
+          </div>
         </slide>
       </carousel>
     </div>
@@ -59,6 +59,7 @@ import { Day, Week } from 'ggtu-timetable-api-client';
 import LessonView from '@/components/timetables/LessonView.vue';
 import { KeyedTimetable } from '@/store';
 import TimetableWeek from '@/components/timetables/TimetableWeek.vue';
+import Card from '@/components/common/Card.vue';
 
 const dayNames: Record<string, string> = {
   [Day.Monday]: 'Пн',
@@ -71,7 +72,7 @@ const dayNames: Record<string, string> = {
 
 @Component({
   name: 'TimetableView',
-  components: { LessonView, Page, TimetableWeek },
+  components: { LessonView, Page, TimetableWeek, Card },
   filters: {
     dayName(index: string) {
       return dayNames[index];
@@ -144,7 +145,6 @@ export default class TimetableView extends Vue {
         }
       });
     });
-
     this.carousel.$children.forEach(slide => {
       slide.$children.forEach((view, row) => {
         (view.$el as HTMLElement).style.height = `${heights[row]}px`;
@@ -155,7 +155,7 @@ export default class TimetableView extends Vue {
 }
 </script>
 
-<style lang="sass">
+<style lang="sass" scoped>
 @import "../assets/common/timetable"
 
 .timetable

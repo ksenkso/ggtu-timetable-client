@@ -1,19 +1,17 @@
 <template>
   <Card
-    :no-header="!(lesson && !lesson.isRegular)"
+    :no-header="true"
     :theme="!lesson && 'warning'"
     :class="[
       'day__lesson',
-      { day__lesson_patch: this.lesson && !this.lesson.isRegular }
+      { day__lesson_patch: this.lesson && !this.lesson.isRegular },
+      { card_striped: !lesson }
     ]"
   >
-    <template slot="header">
-      Пара {{ index + 1 }}
-      <Badge theme="primary" v-if="lesson && !lesson.isRegular"
-        >изменение
-      </Badge>
-    </template>
     <template v-if="lesson">
+      <div class="flex" v-if="lesson && !lesson.isRegular">
+        <Badge theme="primary">изменение</Badge>
+      </div>
       <div class="card__row">
         <p>{{ lesson.subject.name }}</p>
         <p :style="{ fontStyle: 'italic' }">{{ lesson.type | lessonType }}</p>
@@ -54,14 +52,20 @@ export default class LessonView extends Vue {
 </script>
 
 <style lang="sass">
+@import "../../assets/common/utils"
 @import "../../assets/functions"
 .day__lesson
   margin-bottom: 1rem
-
-.card__header
-  display: flex
-  align-items: center
-
+  &_empty
+    .card__content
+      height: 100%
+      display: flex
+      align-items: center
+      justify-content: center
+      font-size: 2rem
+      font-weight: bold
+      color: #333333
+.card
   .badge
     margin-left: auto
 

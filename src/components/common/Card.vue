@@ -42,10 +42,20 @@ export default class Card extends Vue {
   &_theme
     @each $mod, $color in $colors
       &-#{$mod}
-        background: rgba($color, .3)
-        color: #000
+        background-color: rgba($color, .3)
+        color: #222
         .card__header
           border-color: $color
+  &_striped
+    background-image: repeating-linear-gradient(45deg, rgba(theme-color("warning"), .1) 0px, rgba(theme-color("warning"), .1) 15px, rgba(theme-color("warning"), .4) 15px, rgba(theme-color("warning"), .4) 30px)
+    .card__content
+      height: 100%
+      display: flex
+      align-items: center
+      justify-content: center
+      font-size: 2rem
+      font-weight: bold
+      color: #333333
   &__header
     border-bottom: 1px solid #ddd
 
