@@ -160,7 +160,6 @@ export default class TimetableView extends Vue {
 
 .timetable
   padding-top: 3rem
-  padding-bottom: 1rem
   @media (max-width: 768px)
     padding-top: 0
 </style>
