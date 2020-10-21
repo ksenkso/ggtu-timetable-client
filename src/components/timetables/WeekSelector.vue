@@ -4,14 +4,14 @@
       <Button
         class="arrow arrow_left"
         theme="primary"
-        @click.native="$emit('change', -1)"
+        @click.native="moveWeek(-1)"
         >&lt;
       </Button>
       <h3>Неделя {{ weekNumber }}</h3>
       <Button
         class="arrow arrow_right"
         theme="primary"
-        @click.native="$emit('change', 1)"
+        @click.native="moveWeek(1)"
         >&gt;
       </Button>
     </div>
