@@ -123,6 +123,9 @@ export default class TimetableView extends Vue {
 
   changeWeek(value: ButtonGroupValue) {
     this.week = value.index;
+    this.$nextTick(() => {
+      this.setHeights();
+    });
   }
 
   mounted() {

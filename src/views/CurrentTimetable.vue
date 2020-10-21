@@ -220,7 +220,9 @@ export default class CurrentTimetable extends Vue {
     const newDate = new Date(this.start);
     newDate.setDate(this.start.getDate() + 7 * move);
     this.start = newDate;
-    this.updateCurrentTimetable();
+    this.updateCurrentTimetable().then(() => {
+      this.setHeights();
+    });
   }
 
   updateCurrentTimetable() {
