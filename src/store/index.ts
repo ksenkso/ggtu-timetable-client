@@ -13,6 +13,8 @@ import { EntityType, Patch, RegularTimetable } from 'ggtu-timetable-api-client';
 import { Week } from 'ggtu-timetable-api-client/src/interfaces/index';
 import { Lesson } from 'ggtu-timetable-api-client/src/interfaces/index';
 import { v4 } from 'uuid';
+import { RootState } from '@/store/types';
+import menu from './menu';
 
 Vue.use(Vuex);
 const USER_TYPE_KEY = 'ggtu_timetable/user_type';
@@ -32,7 +34,7 @@ export default new Vuex.Store({
       hasLoaded: false,
       patches: [] as Patch[]
     }
-  },
+  } as RootState,
   mutations: {
     [SET_USER_TYPE](state, type: string) {
       localStorage.setItem(USER_TYPE_KEY, type);
@@ -101,5 +103,7 @@ export default new Vuex.Store({
       }
     }
   },
-  modules: {}
+  modules: {
+    menu
+  }
 });
