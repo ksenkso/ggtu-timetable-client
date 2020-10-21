@@ -3,6 +3,7 @@
     <router-link
       class="menu__item"
       exact
+      @click.native="close"
       active-class="menu__item_active"
       v-for="item in items"
       :key="item.name"
@@ -37,48 +38,70 @@ export default class Menu extends Vue {
 @import "../../assets/variables"
 @import "../../assets/functions"
 .menu
-  background-color: #ffffff
+  grid-area: menu
+  background-image: radial-gradient(circle at center -80%, nth($gradient-colors, 1), nth($gradient-colors, 2) 120%)
   box-shadow: 2px 0 5px 0 rgba(0, 0, 0, .13)
   padding: 2rem 0
   display: flex
   flex-direction: column
+
   &__close
     display: none
+    width: 100%
+    height: 60px
     cursor: pointer
-    background-color: transparent
+    background-color: rgba(0, 0, 0, .1)
     background-image: url(../../assets/close.svg)
+    background-size: contain
     background-repeat: no-repeat
     background-position: 50%
     border: none
-    padding: 2rem
     margin-top: auto
+    transition: background-color .3s ease-in-out
     @media (max-width: 960px)
       display: block
-    &:active
-      outline-color: theme-color("primary")
+
+    &:active, &:focus
+      outline: none
+      background-color: rgba(0, 0, 0, .25)
 
   &__item
     text-decoration: none
-    color: #222
+    color: white
     padding: .5rem 1rem
+    margin-bottom: .5rem
+    position: relative
 
-    &_active, &:active
-      color: theme-color("primary")
-
-    &:hover
-      text-decoration: underline
-
-    &_active:hover
+    &:not(&_active)
       text-decoration: none
 
+      &::after
+        content: ''
+        display: block
+        position: absolute
+        bottom: 0
+        left: 0
+        width: 100%
+        height: 3px
+
+      &:hover::after
+        background-image: linear-gradient(to right, nth($gradient-colors, 2), transparent)
+
+    &_active
+      background-image: linear-gradient(to right, nth($gradient-colors, 2), transparent)
+
+
   @media (max-width: 960px)
+    grid-area: initial
     max-width: 80%
-    padding: 0
+    padding: 2rem 0 0 0
     box-shadow: 0 -2px 5px 0 rgba(0, 0, 0, .13)
     position: fixed
     width: 100%
     bottom: 0
     left: 0
+    justify-content: center
+    align-items: center
     transform: translateX(-105%)
     transition: transform .3s ease-in-out
     height: 100%
@@ -86,6 +109,21 @@ export default class Menu extends Vue {
     &_open
       transform: translateX(0)
     &__item
-      margin-bottom: 0
       padding: 1rem
+      font-size: 1.5rem
+      text-align: center
+      width: 90%
+      text-transform: uppercase
+      margin-bottom: 1rem
+
+      &_active, &_active:hover, &_active:active
+        background-image: linear-gradient(to right, transparent, nth($gradient-colors, 2), transparent)
+
+      &:not(&_active)
+        &:hover, &:active
+          &:after
+            background-image: linear-gradient(to right, transparent, nth($gradient-colors, 2), transparent)
+
+      &:first-child
+        margin-top: 50%
 </style>
