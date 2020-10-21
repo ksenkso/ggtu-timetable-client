@@ -41,9 +41,9 @@
               :index="index"
             ></LessonView>
           </div>
-          <Alert class="timetable__empty-day" v-else theme="warning">
-            <h3>Самоподготовка</h3>
-          </Alert>
+          <div class="timetable__empty-day" v-else>
+            <Card class="card_striped" theme="warning">Самоподготовка</Card>
+          </div>
         </slide>
       </carousel>
     </div>
@@ -66,6 +66,7 @@ import LessonView from '@/components/timetables/LessonView.vue';
 import { v4 } from 'uuid';
 import WeekSelector from '@/components/timetables/WeekSelector.vue';
 import { KeyedTimetable } from '@/store';
+import Card from '@/components/common/Card.vue';
 
 export type MergedTimetable = Record<
   string,
@@ -91,7 +92,7 @@ function getCurrentWeek(weekStart: Date): number {
 
 @Component({
   name: 'CurrentTimetable',
-  components: { LessonView, Page, WeekSelector },
+  components: { LessonView, Page, WeekSelector, Card },
   filters: {
     dayName(index: string) {
       return dayNames[index];
@@ -303,11 +304,13 @@ export default class CurrentTimetable extends Vue {
     display: flex
     justify-content: space-around
     align-items: center
+
   &__order
     top: 64px
 
     h3
       text-align: center
+
   .day
     &__date
       text-align: center
