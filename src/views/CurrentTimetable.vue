@@ -42,7 +42,9 @@
             ></LessonView>
           </div>
           <div class="timetable__empty-day" v-else>
-            <Card class="card_striped" theme="warning">Самоподготовка</Card>
+            <Card class="day__lesson card_striped" theme="warning">
+              Самоподготовка
+            </Card>
           </div>
         </slide>
       </carousel>
@@ -53,7 +55,6 @@
 <script lang="ts">
 import { Component, Ref, Vue } from 'vue-property-decorator';
 import { Action, State } from 'vuex-class';
-import Page from '@/components/common/Page.vue';
 import { LOAD_DEFAULT_TIMETABLE, LOAD_PATCHES } from '@/store/action-types';
 import {
   Day,
@@ -64,8 +65,9 @@ import {
 } from 'ggtu-timetable-api-client';
 import LessonView from '@/components/timetables/LessonView.vue';
 import { v4 } from 'uuid';
-import WeekSelector from '@/components/timetables/WeekSelector.vue';
 import { KeyedTimetable } from '@/store';
+// @ts-ignore
+import { Carousel, Slide } from 'vue-carousel';
 import Card from '@/components/common/Card.vue';
 
 export type MergedTimetable = Record<
@@ -92,7 +94,14 @@ function getCurrentWeek(weekStart: Date): number {
 
 @Component({
   name: 'CurrentTimetable',
-  components: { LessonView, Page, WeekSelector, Card },
+  components: {
+    LessonView,
+    Page: () => import('@/components/common/Page.vue'),
+    WeekSelector: () => import('@/components/timetables/WeekSelector.vue'),
+    Card,
+    Carousel,
+    Slide
+  },
   filters: {
     dayName(index: string) {
       return dayNames[index];

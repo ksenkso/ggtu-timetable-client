@@ -5,12 +5,9 @@ import router from './router';
 import store from './store';
 import Button from '@/components/common/Button.vue';
 import Alert from '@/components/common/Alert.vue';
-// @ts-ignore
-import VueCarousel from 'vue-carousel';
 import { Cabinet, LessonType } from 'ggtu-timetable-api-client';
 import Badge from './components/common/Badge.vue';
 
-Vue.use(VueCarousel);
 Vue.config.productionTip = false;
 Vue.component('Button', Button);
 Vue.component('Alert', Alert);

@@ -34,6 +34,7 @@
           <div class="day__label">{{ dayNumber | dayName }}</div>
           <div class="day__lessons" v-if="day.length">
             <LessonView
+              ref="lessons"
               v-for="(lesson, index) in day"
               :key="lesson.id"
               :lesson="lesson.lesson"
@@ -41,7 +42,9 @@
             ></LessonView>
           </div>
           <div class="timetable__empty-day" v-else>
-            <Card class="card_striped" theme="warning">Самоподготовка</Card>
+            <Card class="day__lesson card_striped" theme="warning"
+              >Самоподготовка
+            </Card>
           </div>
         </slide>
       </carousel>
@@ -52,13 +55,13 @@
 <script lang="ts">
 import { Component, Ref, Vue } from 'vue-property-decorator';
 import { Action, State } from 'vuex-class';
-import Page from '@/components/common/Page.vue';
 import { LOAD_DEFAULT_TIMETABLE } from '@/store/action-types';
-import { ButtonGroupValue } from '@/components/common/ButtonGroup.vue';
 import { Day, Week } from 'ggtu-timetable-api-client';
-import LessonView from '@/components/timetables/LessonView.vue';
 import { KeyedTimetable } from '@/store';
-import TimetableWeek from '@/components/timetables/TimetableWeek.vue';
+// @ts-ignore
+import { Carousel, Slide } from 'vue-carousel';
+import { ButtonGroupValue } from '@/types/common';
+import LessonView from '@/components/timetables/LessonView.vue';
 import Card from '@/components/common/Card.vue';
 
 const dayNames: Record<string, string> = {
@@ -72,7 +75,14 @@ const dayNames: Record<string, string> = {
 
 @Component({
   name: 'TimetableView',
-  components: { LessonView, Page, TimetableWeek, Card },
+  components: {
+    LessonView,
+    Page: () => import('@/components/common/Page.vue'),
+    TimetableWeek: () => import('@/components/timetables/TimetableWeek.vue'),
+    Card, //: () => import('@/components/common/Card.vue'),
+    Carousel,
+    Slide
+  },
   filters: {
     dayName(index: string) {
       return dayNames[index];
@@ -85,7 +95,7 @@ export default class TimetableView extends Vue {
   @Action(LOAD_DEFAULT_TIMETABLE) loadTimetable!: () => Promise<void>;
   @Ref('carousel') carousel!: Vue;
   @Ref('lessonNumber') lessonNumber!: HTMLElement[];
-  @Ref('lessonNumbers') lessonNumbers!: HTMLElement;
+  @Ref('lessons') lessons!: LessonView[];
   week = Week.Top;
   isDragging = false;
 
@@ -125,18 +135,23 @@ export default class TimetableView extends Vue {
     this.week = value.index;
     this.$nextTick(() => {
       this.setHeights();
+      console.log(this.lessons);
     });
   }
 
   mounted() {
+    window.addEventListener('resize', this.setHeights);
     (this.hasLoaded ? Promise.resolve() : this.loadTimetable()).then(() => {
-      this.setHeights();
-      document.documentElement.addEventListener('resize', this.setHeights);
+      console.log(this.carousel.$children.map(vm => vm.$children));
+      this.$nextTick(() => {
+        console.log(this.lessons);
+        this.setHeights();
+      });
     });
   }
 
   destroyed() {
-    document.documentElement.removeEventListener('resize', this.setHeights);
+    window.removeEventListener('resize', this.setHeights);
   }
 
   private setHeights() {

@@ -15,11 +15,6 @@
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import Button from '@/components/common/Button.vue';
 
-export interface ButtonGroupValue {
-  index: number;
-  value: string;
-}
-
 @Component({
   name: 'ButtonGroup',
   components: { Button }
