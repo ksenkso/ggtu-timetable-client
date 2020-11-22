@@ -1,17 +1,11 @@
 <template>
-  <div class="timetable" v-if="hasLoaded">
+  <div class="timetable timetable_regular" v-if="hasLoaded">
     <TimetableWeek @change="changeWeek"></TimetableWeek>
     <div :class="['timetable__week', { timetable__week_dragging: isDragging }]">
-      <div class="timetable__order" ref="lessonNumbers">
-        <div
-          class="timetable__lesson-number"
-          v-for="index in maxIndex + 1"
-          :key="index"
-          ref="lessonNumber"
-        >
-          {{ index }}
-        </div>
-      </div>
+      <LessonsOrderColumn
+        :item-heights="lessonHeights"
+        :lessons-count="maxLessonsCount"
+      ></LessonsOrderColumn>
       <carousel
         ref="carousel"
         @mousedown.native="startDragging"
@@ -79,6 +73,8 @@ const dayNames: Record<string, string> = {
     LessonView,
     Page: () => import('@/components/common/Page.vue'),
     TimetableWeek: () => import('@/components/timetables/TimetableWeek.vue'),
+    LessonsOrderColumn: () =>
+      import('@/components/timetables/LessonsOrderColumn.vue'),
     Card, //: () => import('@/components/common/Card.vue'),
     Carousel,
     Slide
@@ -98,12 +94,13 @@ export default class TimetableView extends Vue {
   @Ref('lessons') lessons!: LessonView[];
   week = Week.Top;
   isDragging = false;
+  lessonHeights = [];
 
   get weeks() {
     return ['Верхняя', 'Нижняя'];
   }
 
-  get maxIndex() {
+  get maxLessonIndex() {
     return Math.max(
       ...Object.keys(this.currentWeek).map(key => {
         return Math.max(
@@ -114,6 +111,22 @@ export default class TimetableView extends Vue {
       })
     );
   }
+
+  get maxLessonsCount() {
+    return this.maxLessonIndex + 1;
+  }
+
+  /*get maxIndex() {
+    return Math.max(
+      ...Object.keys(this.currentWeek).map(key => {
+        return Math.max(
+          ...this.currentWeek[key].map(entry =>
+            entry.lesson ? entry.lesson.index : -1
+          )
+        );
+      })
+    );
+  }*/
 
   get currentWeek() {
     return this.timetable[this.week];
@@ -155,7 +168,7 @@ export default class TimetableView extends Vue {
   }
 
   private setHeights() {
-    const heights = [0, 0, 0, 0, 0, 0];
+    const heights = Array(this.maxLessonsCount).fill(0);
     this.carousel.$children.forEach(slide => {
       slide.$children.forEach((view, row) => {
         if (view.$el.clientHeight > heights[row]) {
@@ -163,10 +176,10 @@ export default class TimetableView extends Vue {
         }
       });
     });
+    this.lessonHeights = heights;
     this.carousel.$children.forEach(slide => {
       slide.$children.forEach((view, row) => {
         (view.$el as HTMLElement).style.height = `${heights[row]}px`;
-        this.lessonNumber[row].style.height = `${heights[row]}px`;
       });
     });
   }

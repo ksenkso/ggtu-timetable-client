@@ -8,29 +8,8 @@
   flex-direction: column
   padding-bottom: 60px
 
-  &__order
-    position: absolute
-    left: 0
-    top: 44px
-    display: flex
-    flex-direction: column
-    row-gap: 1rem
-    width: 3rem
-    @media (max-width: 400px)
-      width: 1.5rem
-
-  &__lesson-number
-    display: flex
-    align-items: center
-    width: 100%
-    justify-content: center
-    border: 1px solid #dddddd
-    border-radius: 3px
-    font-weight: bold
-    background-color: theme-color("light")
-
   &__week
-    padding-left: 3rem
+    //padding-left: 3rem
     cursor: grab
     position: relative
     @media (max-width: 400px)
@@ -45,6 +24,8 @@
     height: 100%
     display: flex
     flex-direction: column
+    &:first-child
+      margin-left: $lessons-order-width
 
     &__label
       text-align: center

@@ -1,17 +1,11 @@
 <template>
-  <div class="timetable" v-if="hasLoaded">
+  <div class="timetable timetable_current" v-if="hasLoaded">
     <WeekSelector :start-week="weekNumber" @change="moveWeek"></WeekSelector>
     <div :class="['timetable__week', { timetable__week_dragging: isDragging }]">
-      <div class="timetable__order" ref="lessonNumbers">
-        <div
-          class="timetable__lesson-number"
-          v-for="index in maxIndex + 1"
-          :key="index"
-          ref="lessonNumber"
-        >
-          {{ index }}
-        </div>
-      </div>
+      <LessonsOrderColumn
+        :item-heights="lessonHeights"
+        :lessons-count="maxLessonsCount"
+      ></LessonsOrderColumn>
       <carousel
         ref="carousel"
         @mousedown.native="startDragging"
@@ -98,6 +92,8 @@ function getCurrentWeek(weekStart: Date): number {
     LessonView,
     Page: () => import('@/components/common/Page.vue'),
     WeekSelector: () => import('@/components/timetables/WeekSelector.vue'),
+    LessonsOrderColumn: () =>
+      import('@/components/timetables/LessonsOrderColumn.vue'),
     Card,
     Carousel,
     Slide
@@ -129,6 +125,23 @@ export default class CurrentTimetable extends Vue {
   appliedPatches: Record<string, Patch> = {};
   start = new Date();
   currentTimetable: MergedTimetable = {};
+  lessonHeights = [];
+
+  get maxLessonIndex() {
+    return Math.max(
+      ...Object.keys(this.currentWeek).map(key => {
+        return Math.max(
+          ...this.currentWeek[key].map(entry =>
+            entry.lesson ? entry.lesson.index : -1
+          )
+        );
+      })
+    );
+  }
+
+  get maxLessonsCount() {
+    return this.maxLessonIndex + 1;
+  }
 
   get weekNumber() {
     return getCurrentWeek(this.start);
@@ -148,18 +161,6 @@ export default class CurrentTimetable extends Vue {
 
   get swiperOptions() {
     return {};
-  }
-
-  get maxIndex() {
-    return Math.max(
-      ...Object.keys(this.currentWeek).map(key => {
-        return Math.max(
-          ...this.currentWeek[key].map(entry =>
-            entry.lesson ? entry.lesson.index : -1
-          )
-        );
-      })
-    );
   }
 
   getPatch(dayIndex: string | number, lessonIndex: number, date?: Date) {
@@ -256,10 +257,6 @@ export default class CurrentTimetable extends Vue {
 
     (this.hasLoaded ? Promise.resolve() : this.loadTimetable())
       .then(() => {
-        // return this.loadPatches({
-        //   type: this.user.type,
-        //   id: this.user.entityId
-        // });
         return this.updateCurrentTimetable();
       })
       .then(() => {
@@ -272,7 +269,7 @@ export default class CurrentTimetable extends Vue {
   }
 
   private setHeights() {
-    const heights = [0, 0, 0, 0, 0, 0];
+    const heights = Array(this.maxLessonsCount).fill(0);
     this.carousel.$children.forEach(slide => {
       slide.$children.forEach((view, row) => {
         if (view.$el.clientHeight > heights[row]) {
@@ -280,10 +277,10 @@ export default class CurrentTimetable extends Vue {
         }
       });
     });
+    this.lessonHeights = heights;
     this.carousel.$children.forEach(slide => {
       slide.$children.forEach((view, row) => {
         (view.$el as HTMLElement).style.height = `${heights[row]}px`;
-        this.lessonNumber[row].style.height = `${heights[row]}px`;
       });
     });
   }
