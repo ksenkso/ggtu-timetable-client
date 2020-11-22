@@ -26,7 +26,7 @@ export default class TimetableWeek extends Vue {}
   margin-bottom: 1rem
   position: fixed
   right: 2rem
-  top: #{$header-height + 8px}
+  top: calc(#{$header-height} + 8px)
   z-index: 1
   @media (max-width: 799px)
     height: 60px
