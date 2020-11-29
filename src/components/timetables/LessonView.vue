@@ -2,6 +2,7 @@
   <Card
     :no-header="true"
     :theme="!lesson && 'warning'"
+    :elevation="2"
     :class="[
       'day__lesson',
       { day__lesson_patch: this.lesson && !this.lesson.isRegular },

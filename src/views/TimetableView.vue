@@ -36,7 +36,10 @@
             ></LessonView>
           </div>
           <div class="timetable__empty-day" v-else>
-            <Card class="day__lesson card_striped" theme="warning"
+            <Card
+              :elevation="2"
+              class="day__lesson card_striped"
+              theme="warning"
               >Самоподготовка
             </Card>
           </div>
@@ -75,7 +78,7 @@ const dayNames: Record<string, string> = {
     TimetableWeek: () => import('@/components/timetables/TimetableWeek.vue'),
     LessonsOrderColumn: () =>
       import('@/components/timetables/LessonsOrderColumn.vue'),
-    Card, //: () => import('@/components/common/Card.vue'),
+    Card,
     Carousel,
     Slide
   },
@@ -94,7 +97,7 @@ export default class TimetableView extends Vue {
   @Ref('lessons') lessons!: LessonView[];
   week = Week.Top;
   isDragging = false;
-  lessonHeights = [];
+  lessonHeights: number[] = [];
 
   get weeks() {
     return ['Верхняя', 'Нижняя'];
@@ -168,7 +171,7 @@ export default class TimetableView extends Vue {
   }
 
   private setHeights() {
-    const heights = Array(this.maxLessonsCount).fill(0);
+    const heights: number[] = Array(this.maxLessonsCount).fill(0);
     this.carousel.$children.forEach(slide => {
       slide.$children.forEach((view, row) => {
         if (view.$el.clientHeight > heights[row]) {
@@ -186,10 +189,10 @@ export default class TimetableView extends Vue {
 }
 </script>
 
-<style lang="sass" scoped>
+<style lang="sass">
 @import "../assets/common/timetable"
 
-.timetable
+.timetable_regular
   padding-top: 3rem
   @media (max-width: 768px)
     padding-top: 0

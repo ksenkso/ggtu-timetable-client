@@ -14,6 +14,7 @@
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import Button from '@/components/common/Button.vue';
+import { ButtonGroupValue } from '@/types/common';
 
 @Component({
   name: 'ButtonGroup',

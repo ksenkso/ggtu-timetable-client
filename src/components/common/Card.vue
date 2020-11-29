@@ -1,5 +1,5 @@
 <template>
-  <div :class="className">
+  <div :class="className" :style="cardStyle">
     <h2 class="card__header" v-if="!noHeader">
       <slot name="header"></slot>
     </h2>
@@ -22,6 +22,7 @@ import { Prop } from 'vue-property-decorator';
 export default class Card extends Vue {
   @Prop() theme?: string;
   @Prop() noHeader?: boolean;
+  @Prop() elevation!: number;
 
   get className() {
     const classes = ['card'];
@@ -30,6 +31,12 @@ export default class Card extends Vue {
     }
     return classes;
   }
+
+  get cardStyle() {
+    return {
+      '--elevation': this.elevation
+    };
+  }
 }
 </script>
 
@@ -37,7 +44,8 @@ export default class Card extends Vue {
 @import '../../assets/variables'
 @import '../../assets/functions'
 .card
-  box-shadow: 0 2px 5px 0 rgba(0, 0, 0, .17)
+  --elevation: 0
+  box-shadow: 0 2px calc(var(--elevation) * 1px) 0 rgba(0, 0, 0, .17)
   overflow: hidden
   border-radius: .3125rem
   background-color: #fff

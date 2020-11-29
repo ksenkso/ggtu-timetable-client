@@ -1,13 +1,14 @@
 <template>
-  <div class="timetable__order-column" ref="lessonNumbers">
+  <div class="timetable__order-column order" ref="lessonNumbers">
     <div
-      class="timetable__lesson-number"
+      class="order__item timetable__lesson-number"
       v-for="index in lessonsCount"
       :key="index"
       :style="getStyle(index - 1)"
       ref="lessonIndices"
     >
-      {{ index }}
+      <div class="order__number">{{ index }}</div>
+      <div class="order__shadow"></div>
     </div>
   </div>
 </template>
@@ -21,9 +22,9 @@ import { Component, Prop, Ref, Vue } from 'vue-property-decorator';
 export default class LessonsOrderColumn extends Vue {
   @Prop({ required: true }) lessonsCount!: number;
   @Prop({ required: true }) itemHeights!: number[];
-  @Ref('lessonIndices') lessonIndices: HTMLElement[];
+  @Ref('lessonIndices') lessonIndices!: HTMLElement[];
 
-  static calculateHeight(height) {
+  static calculateHeight(height: number) {
     return `${height + 10}px`;
   }
 
@@ -42,33 +43,53 @@ export default class LessonsOrderColumn extends Vue {
 @import "../../assets/variables"
 .timetable
   &_current
-    .timetable__order-column
+    .order
       top: 59px
 
   &_regular
-    .timetable__order-column
+    .order
       top: 40px
 
-  &__order-column
-    position: absolute
-    left: 0
-    display: flex
-    flex-direction: column
-    row-gap: 6px
-    width: $lessons-order-width
-    @media (max-width: 400px)
-      width: 1.5rem
+.order
+  position: absolute
+  left: 0
+  display: flex
+  flex-direction: column
+  row-gap: 6px
+  width: $lessons-order-width
+  @media (max-width: 400px)
+    width: 1.5rem
 
-  &__lesson-number
+  &__item
     user-select: none
     pointer-events: none
     display: flex
     align-items: center
     width: 100%
     justify-content: center
-    border: 1px solid #dddddd
     border-radius: 3px
     font-weight: bold
-    background-color: theme-color("light")
     z-index: 2
+    position: relative
+
+  &__number
+    background-color: theme-color("light")
+    border: 1px solid #dddddd
+    width: 100%
+    height: 100%
+    display: flex
+    justify-content: center
+    align-items: center
+    position: relative
+    z-index: 2
+
+  &__shadow
+    z-index: 0
+    position: absolute
+    top: -5px
+    right: -5px
+    width: 10px
+    height: calc(100% + 10px)
+
+    background: radial-gradient(farthest-side, rgba(0, 0, 0, 0.13), transparent)
 </style>

@@ -125,7 +125,7 @@ export default class CurrentTimetable extends Vue {
   appliedPatches: Record<string, Patch> = {};
   start = new Date();
   currentTimetable: MergedTimetable = {};
-  lessonHeights = [];
+  lessonHeights: number[] = [];
 
   get maxLessonIndex() {
     return Math.max(
