@@ -1,29 +1,24 @@
-# ggtu-timetable-client
+# NOTE
 
-## Project setup
-```
-npm install
-```
+This repo is no longer maintained
 
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
+# GGTU Timetable Client
 
-### Compiles and minifies for production
-```
-npm run build
-```
+## Description
 
-### Run your unit tests
-```
-npm run test:unit
-```
+This is a web timetable client made for [GGTU](https://ggtu.ru/).
 
-### Lints and fixes files
-```
-npm run lint
-```
+Runs with [this server](https://github.com/ksenkso/ggtu-timetable-api).
 
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+Required environment variables are presented in `.env.example`.
+
+## Features
+
+- Choose whether you want to see a timetable for a group or a teacher;
+- View timetable for current week or general timetable for even and odd weeks;
+
+## Related repos
+
+- [API Server](https://github.com/ksenkso/ggtu-timetable-api)
+- [Admin panel](https://github.com/ksenkso/ggtu-timetable-admin-vue)
+- [Api client](https://github.com/ksenkso/ggtu-timetable-api-client)
