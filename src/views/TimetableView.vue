@@ -106,6 +106,10 @@ export default class TimetableView extends Vue {
   get maxLessonIndex() {
     return Math.max(
       ...Object.keys(this.currentWeek).map(key => {
+        if (!this.currentWeek[key].length) {
+          return -1;
+        }
+
         return Math.max(
           ...this.currentWeek[key].map(entry =>
             entry.lesson ? entry.lesson.index : -1
