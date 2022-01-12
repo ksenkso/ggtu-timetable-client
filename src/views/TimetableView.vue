@@ -175,7 +175,7 @@ export default class TimetableView extends Vue {
   }
 
   private setHeights() {
-    const heights: number[] = Array(this.maxLessonsCount).fill(0);
+    const heights = Array(this.maxLessonsCount || 1).fill(0);
     this.carousel.$children.forEach(slide => {
       slide.$children.forEach((view, row) => {
         if (view.$el.clientHeight > heights[row]) {

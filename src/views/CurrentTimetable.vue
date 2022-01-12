@@ -130,6 +130,10 @@ export default class CurrentTimetable extends Vue {
   get maxLessonIndex() {
     return Math.max(
       ...Object.keys(this.currentWeek).map(key => {
+        if (!this.currentWeek[key].length) {
+          return -1;
+        }
+
         return Math.max(
           ...this.currentWeek[key].map(entry =>
             entry.lesson ? entry.lesson.index : -1
@@ -269,7 +273,7 @@ export default class CurrentTimetable extends Vue {
   }
 
   private setHeights() {
-    const heights = Array(this.maxLessonsCount).fill(0);
+    const heights = Array(this.maxLessonsCount || 1).fill(0);
     this.carousel.$children.forEach(slide => {
       slide.$children.forEach((view, row) => {
         if (view.$el.clientHeight > heights[row]) {
