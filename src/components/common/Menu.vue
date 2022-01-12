@@ -1,5 +1,6 @@
 <template>
   <div :class="['menu', { menu_open: isOpen }]">
+    <h3 class="timetable-entity">{{ name }}</h3>
     <router-link
       class="menu__item"
       exact
@@ -10,13 +11,20 @@
       :to="item.to"
       >{{ item.name }}
     </router-link>
+    <div v-if="isAuthenticated" class="menu__item" @click="onLogout">
+      Выход
+    </div>
     <button class="menu__close" @click="close"></button>
   </div>
 </template>
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
-import { namespace } from 'vuex-class';
+import { Getter, Mutation, namespace, State } from 'vuex-class';
+import { LOGOUT } from '@/store/mutation-types';
+import { Group, Teacher } from 'ggtu-timetable-api-client';
+import api from '@/api';
+import Endpoint from 'ggtu-timetable-api-client/dist/endpoints/Endpoint';
 
 const menu = namespace('menu');
 
@@ -26,11 +34,29 @@ const menu = namespace('menu');
 export default class Menu extends Vue {
   @menu.State('isOpen') isOpen!: boolean;
   @menu.Action('CLOSE') close!: () => void;
+  @State('user') user!: { type: string; entityId: number };
+  @Getter('isAuthenticated') isAuthenticated!: boolean;
+  @Mutation(LOGOUT) logout!: () => void;
 
   items = [
     { name: 'Моё расписание', to: '/' },
     { name: 'Текущее расписание', to: '/current' }
   ];
+  name = '';
+
+  onLogout() {
+    this.logout();
+    this.$router.push({ name: 'FirstVisit' });
+  }
+
+  created() {
+    const endpoint = (this.user.type === 'group'
+      ? api.groups
+      : api.teachers) as Endpoint<Group | Teacher>;
+    endpoint.get(this.user.entityId).then((response: Group | Teacher) => {
+      this.name = response.name;
+    });
+  }
 }
 </script>
 
@@ -71,6 +97,7 @@ export default class Menu extends Vue {
     padding: .5rem 1rem
     margin-bottom: .5rem
     position: relative
+    cursor: pointer
 
     &:not(&_active)
       text-decoration: none
@@ -126,4 +153,7 @@ export default class Menu extends Vue {
 
       &:first-child
         margin-top: 50%
+  .timetable-entity
+    margin: 0 18px 12px
+    color: white
 </style>

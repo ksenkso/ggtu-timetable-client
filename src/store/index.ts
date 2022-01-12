@@ -5,7 +5,8 @@ import {
   SET_PATCHES,
   SET_TIMETABLE_LOADED,
   SET_USER_PREFERRED_ENTITY,
-  SET_USER_TYPE
+  SET_USER_TYPE,
+  LOGOUT
 } from '@/store/mutation-types';
 import api from '@/api';
 import { LOAD_DEFAULT_TIMETABLE, LOAD_PATCHES } from '@/store/action-types';
@@ -43,6 +44,12 @@ export default new Vuex.Store({
     [SET_USER_PREFERRED_ENTITY](state, id: number) {
       localStorage.setItem(USER_PREFERRED_ENTITY_KEY, id.toString());
       state.user.entityId = id;
+    },
+    [LOGOUT](state) {
+      localStorage.removeItem(USER_TYPE_KEY);
+      localStorage.removeItem(USER_TYPE_KEY);
+      state.user.type = '';
+      state.user.entityId = 0;
     },
     [SET_DEFAULT_TIMETABLE](state, timetable: RegularTimetable) {
       const mapped = {} as KeyedTimetable;
@@ -101,6 +108,11 @@ export default new Vuex.Store({
             context.commit(SET_PATCHES, patches);
           });
       }
+    }
+  },
+  getters: {
+    isAuthenticated(state) {
+      return !!state.user.type;
     }
   },
   modules: {
